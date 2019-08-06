@@ -1,0 +1,72 @@
+#leftcontainer {
+    width: 45%;
+    float: left;
+    /* border: 2px solid red; */
+}
+
+#middlecontainer {
+    width: 25%;
+    float: left;
+    /* border: 2px solid green; */
+}
+
+#rightcontainer {
+    width: 25%;
+    float: left;
+    /* border: 2px solid blue; */
+}
+
+#board {
+    width: 100%;
+}
+
+#wordinput {
+    width: 100%;
+}
+
+#log {
+    width: 100%;
+}
+
+#scoreboard {
+    width: 80%;
+    position: fixed;
+    top: 50;
+    background-color: #bbbbbb;
+    border: 3px solid black;
+}
+
+.closebutton {
+    width: 100%;
+    text-align: right;
+    text-decoration: underline;
+    cursor: hand;
+}
+
+.playerscoreboard {
+    float: left;
+    padding: 20;
+}
+
+.lettercontainer {  
+    display: inline-block;
+    width: 19%;  
+    padding-top: 19%;
+    position: relative;
+    border: 3px solid black;
+}
+
+.letter {    
+    position: absolute;
+    top: 15%;
+    left: 20%;
+    color: black;
+    font-size: 400%;
+    font-family: Calibri;
+}
+
+.wordscore {
+    display: inline;
+    font-weight: bold;
+    color: red;
+}
