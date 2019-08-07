@@ -39,7 +39,7 @@ class WordChecker:
 
     def check(self, word):
 
-        def dfs(node, string, visited):   
+        def dfs(node, string, visited): 
 
             nl = len(self.letters[node])
             if self.letters[node].lower() != string[-1 * nl:].lower():
@@ -50,7 +50,7 @@ class WordChecker:
 
             for neighbor in self.adjList[node]:
                 if not visited[neighbor]:
-                    if dfs(neighbor, string[:-1], [True if i == node else visited[i] for i in range(len(visited))]):
+                    if dfs(neighbor, string[:-1 * nl], [True if i == node else visited[i] for i in range(len(visited))]):
                         return True
             
             return False
@@ -60,4 +60,3 @@ class WordChecker:
                 if dfs(i, word, [False for _ in range(len(self.adjList))]):
                     return True
         return False
-
