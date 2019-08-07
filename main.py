@@ -1,6 +1,6 @@
 from Game import Game
 from PrefixTrie import PrefixTrie
-from flask import Flask, render_template      
+from flask import Flask, render_template, request      
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
 
 GAMELIMIT = 5
@@ -16,35 +16,39 @@ def render_client():
 
 @socketio.on('connect')
 def handle_connection(methods = ['GET', 'POST']):
-    print('User joined!')
+    print('\n** USER UPDATE: User joined! SID: {0}\n'.format(request.sid))
     emit('user_join_response')
+
+@socketio.on('disconnect')
+def handle_disconnection(methods = ['GET', 'POST']):
+    print('\n** USER UPDATE: {0} disconnected\n'.format(request.sid))
+    for gid in games.keys():
+        games[gid].removePlayer(request.sid)
 
 
 @socketio.on('game_creation')
 def handle_game_creation_event(json, methods = ['GET', 'POST']):
 
-    user = json['user']
     gid = json['gid']
     ogid = json['old_gid']
     if ogid:        
         leave_room(str(ogid))
-        games[ogid].removePlayer(user)
+        games[ogid].removePlayer(request.sid)
 
     if gid in games.keys():
         emit('game_creation_response', '{ "response": "NOTUNIQUE" }')
     elif len(games) >= GAMELIMIT:
         emit('game_creation_response', '{ "response": "TOOMANY" }')
     else:
-        games[gid] = Game(gid, 4, False, englishDictionary) # these will be obtained from response eventually
+        games[gid] = Game(gid, 4, True, englishDictionary) # these will be obtained from response eventually
         join_room(str(gid))
-        games[gid].addPlayer(user)
+        games[gid].addPlayer(request.sid)
         emit('game_creation_response', '{{ "response": "OK", {0} }}'.format(str(games[gid])))
 
 
 @socketio.on('game_join')
 def handle_game_join_event(json, methods = ['GET', 'POST']):
 
-    user = json['user']
     gid = json['gid']
     ogid = json['old_gid']
     if ogid:
@@ -55,7 +59,7 @@ def handle_game_join_event(json, methods = ['GET', 'POST']):
         emit('game_join_response', '{ "response": "DOESNOTEXIST" }')
     else:
         join_room(str(gid))
-        games[gid].addPlayer(user)
+        games[gid].addPlayer(request.sid)
         emit('game_join_response', '{{ "response": "OK", {0} }}'.format(str(games[gid])))
 
 
@@ -74,18 +78,19 @@ def handle_board_gen_event(json, methods = ['GET', 'POST']):
 @socketio.on('end_game')
 def handle_end_game(json, methods = ['GET', 'POST']):
 
-    gid = json['gid']    
+    gid = json['gid']
+    games[gid].resetResults()    
     emit('list_request', room = str(gid))
 
 
 @socketio.on('list_submit')
 def handle_list_submit(json, methods = ['GET', 'POST']):
 
+    username = json['username']
     gid = json['gid']
-    user = json['user']
     wordList = json['list']
 
-    games[gid].setList(user, wordList)
+    games[gid].setList(request.sid, username, wordList)
     if (games[gid].allListsSubmitted()):
         result = games[gid].roundResult()
         emit('game_result', result, room = str(gid))

@@ -13,6 +13,7 @@ class Game:
         self.height = 5
         self.players = set()
         self.wordLists = dict()
+        self.playerNames = dict()
         self.minimumLetters = minimumLetters
         self.includeDoubleLetterCube = includeDoubleLetterCube
         self.checker = WordChecker(validWords)
@@ -23,21 +24,25 @@ class Game:
 
     def newRound(self):
         self.grid = Cubes.getGrid(self.width, self.height, self.includeDoubleLetterCube)
-        self.wordLists.clear()
         self.checker.setGrid(self.width, self.height, self.grid)
 
-    def addPlayer(self, user):
-        self.players.add(user)
+    def addPlayer(self, sid):
+        self.players.add(sid)
 
-    def removePlayer(self, user):
-        if user in self.players:
-            self.players.remove(user)
+    def removePlayer(self, sid):
+        if sid in self.players:
+            self.players.remove(sid)
+
+    def resetResults(self):
+        self.wordLists.clear()
+        self.playerNames.clear()
 
     def allListsSubmitted(self):
         return len(self.players) == len(self.wordLists)
 
-    def setList(self, user, wordList):
-        self.wordLists[user] = wordList
+    def setList(self, sid, username, wordList):
+        self.wordLists[sid] = wordList
+        self.playerNames[sid] = username
 
     def roundResult(self):
             
@@ -52,18 +57,20 @@ class Game:
         struck = set(w for w, c in counts.items() if c > 1)
 
         results = dict()
-        for user in self.wordLists.keys():
+        for sid in self.wordLists.keys():
 
-            invalid = set(w for w in self.wordLists[user] if (len(w) < self.minimumLetters or not self.checker.check(w)))
-            remaining = set(self.wordLists[user]) - invalid
+            name = self.playerNames[sid]
+
+            invalid = set(w for w in self.wordLists[sid] if (len(w) < self.minimumLetters or not self.checker.check(w)))
+            remaining = set(self.wordLists[sid]) - invalid
             scored = remaining - struck
 
-            results[user] = dict()            
-            results[user]["invalid"] = sorted(invalid)
-            results[user]["struck"] = sorted(remaining & struck)
-            results[user]["scored"] = sorted(scored)
-            results[user]["scores"] = [score(w) for w in results[user]["scored"]]
-            results[user]["totalScore"] = sum(results[user]["scores"])
+            results[name] = dict()            
+            results[name]["invalid"] = sorted(invalid)
+            results[name]["struck"] = sorted(remaining & struck)
+            results[name]["scored"] = sorted(scored)
+            results[name]["scores"] = [score(w) for w in results[name]["scored"]]
+            results[name]["totalScore"] = sum(results[name]["scores"])
 
         return json.dumps(results)
 

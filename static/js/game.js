@@ -71,7 +71,6 @@ var main = (function () {
             let user = $('#usernameField').val()
             if (game_id !== '') {
                 gameSocket.emit('game_creation', {
-                    user: user,
                     old_gid: gameGid,
                     gid: game_id
                 })
@@ -87,7 +86,6 @@ var main = (function () {
             let user = $('#usernameField').val()
             if (game_id !== '') {
                 gameSocket.emit('game_join', {
-                    user: user,
                     old_gid: gameGid,
                     gid: game_id
                 })
@@ -102,7 +100,6 @@ var main = (function () {
             e.preventDefault()
             let user = $('#usernameField').val()
             gameSocket.emit('board_gen', {
-                user: user,
                 gid: gameGid
             })
         })
@@ -111,7 +108,6 @@ var main = (function () {
             e.preventDefault()
             let user = $('#usernameField').val()
             gameSocket.emit('end_game', {
-                user: user,
                 gid: gameGid
             })
         })
@@ -178,9 +174,9 @@ var main = (function () {
     gameSocket.on('list_request', function () {
 
         log_message('', 'Submitting list of found words')
-        let user = $('#usernameField').val()
+        let username = $('#usernameField').val()
         gameSocket.emit('list_submit', {
-            user: user,
+            username: username,
             gid: gameGid,
             list: words
         })
