@@ -39,12 +39,14 @@ class WordChecker:
 
     def check(self, word):
 
-        def dfs(node, string, visited):
-            #print('called with {0} at {1} with visited {2}'.format(string, node, visited))
-            if self.letters[node] != string[-1]:
+        def dfs(node, string, visited):   
+
+            nl = len(self.letters[node])
+            if self.letters[node].lower() != string[-1 * nl:].lower():
                 return False
-            if len(string) == 1:
+            if len(string) == nl:
                 return True
+            remaining = string[:-1 * nl]
 
             for neighbor in self.adjList[node]:
                 if not visited[neighbor]:
