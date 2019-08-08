@@ -24,7 +24,8 @@ def handle_disconnection(methods = ['GET', 'POST']):
     print('\n** USER UPDATE: {0} disconnected\n'.format(request.sid))
     for gid in games.keys():
         games[gid].removePlayer(request.sid)
-
+        if games[gid].numPlayers() == 0:
+            del games[gid]
 
 @socketio.on('game_creation')
 def handle_game_creation_event(json, methods = ['GET', 'POST']):
@@ -34,6 +35,8 @@ def handle_game_creation_event(json, methods = ['GET', 'POST']):
     if ogid:        
         leave_room(str(ogid))
         games[ogid].removePlayer(request.sid)
+        if games[ogid].numPlayers() == 0:
+            del games[ogid]
 
     if gid in games.keys():
         emit('game_creation_response', '{ "response": "NOTUNIQUE" }')
@@ -53,7 +56,9 @@ def handle_game_join_event(json, methods = ['GET', 'POST']):
     ogid = json['old_gid']
     if ogid:
         leave_room(str(ogid))
-        games[ogid].removePlayer(user)
+        games[ogid].removePlayer(request.sid)
+        if games[ogid].numPlayers() == 0:
+            del games[ogid]
 
     if gid not in games.keys():
         emit('game_join_response', '{ "response": "DOESNOTEXIST" }')

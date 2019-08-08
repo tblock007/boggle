@@ -33,6 +33,9 @@ class Game:
         if sid in self.players:
             self.players.remove(sid)
 
+    def numPlayers(self):
+        return len(self.players)
+
     def resetResults(self):
         self.wordLists.clear()
         self.playerNames.clear()
