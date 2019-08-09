@@ -7,6 +7,7 @@ from collections import Counter
 
 
 class Game:
+
     def __init__(self, gid, minimumLetters, includeDoubleLetterCube, validWords):
         self.gid = gid
         self.width = 5
@@ -19,33 +20,42 @@ class Game:
         self.checker = WordChecker(validWords)
         self.newRound()
 
+
     def __str__(self):
         return '"gid": "{0}", "width": {1}, "height": {2}, "grid": "{3}"'.format(self.gid, self.width, self.height, ','.join(self.grid))
+
 
     def newRound(self):
         self.grid = Cubes.getGrid(self.width, self.height, self.includeDoubleLetterCube)
         self.checker.setGrid(self.width, self.height, self.grid)
 
+
     def addPlayer(self, sid):
         self.players.add(sid)
+
 
     def removePlayer(self, sid):
         if sid in self.players:
             self.players.remove(sid)
 
+
     def numPlayers(self):
         return len(self.players)
+
 
     def resetResults(self):
         self.wordLists.clear()
         self.playerNames.clear()
 
+
     def allListsSubmitted(self):
         return len(self.players) == len(self.wordLists)
+
 
     def setList(self, sid, username, wordList):
         self.wordLists[sid] = wordList
         self.playerNames[sid] = username
+
 
     def roundResult(self):
             
@@ -54,7 +64,8 @@ class Game:
             elif len(word) == 5: return 2
             elif len(word) == 6: return 3
             elif len(word) == 7: return 5
-            else: return 11
+            elif len(word) == 8: return 11
+            else: return (2 * len(word))
 
         counts = reduce((lambda c1, c2: c1 + c2), (map(Counter, self.wordLists.values())))
         struck = set(w for w, c in counts.items() if c > 1)
@@ -76,6 +87,7 @@ class Game:
             results[name]["totalScore"] = sum(results[name]["scores"])
 
         return json.dumps(results)
+
 
     def solve(self):
         words = [w for w in self.checker.findAllWords() if len(w) >= self.minimumLetters]
