@@ -68,7 +68,6 @@ var main = (function () {
         $('#createform').on('submit', function (e) {
             e.preventDefault()
             let game_id = $('#creategameid').val()
-            let user = $('#usernameField').val()
             if (game_id !== '') {
                 gameSocket.emit('game_creation', {
                     old_gid: gameGid,
@@ -83,7 +82,6 @@ var main = (function () {
         $('#joinform').on('submit', function (e) {
             e.preventDefault()
             let game_id = $('#joingameid').val()
-            let user = $('#usernameField').val()
             if (game_id !== '') {
                 gameSocket.emit('game_join', {
                     old_gid: gameGid,
@@ -98,7 +96,6 @@ var main = (function () {
 
         $('#genform').on('submit', function (e) {
             e.preventDefault()
-            let user = $('#usernameField').val()
             gameSocket.emit('board_gen', {
                 gid: gameGid
             })
@@ -106,8 +103,14 @@ var main = (function () {
 
         $('#endform').on('submit', function (e) {
             e.preventDefault()
-            let user = $('#usernameField').val()
             gameSocket.emit('end_game', {
+                gid: gameGid
+            })
+        })
+
+        $('#solveform').on('submit', function (e) {
+            e.preventDefault()
+            gameSocket.emit('solve_game', {
                 gid: gameGid
             })
         })
@@ -184,7 +187,7 @@ var main = (function () {
 
     gameSocket.on('game_result', function (msg) {
         resp = JSON.parse(msg)
-        scoreboardHTML = '<div id ="scoreboard"><div class="closebutton">CLOSE</div>'
+        scoreboardHTML = '<div id ="scoreboard"><div id="closebutton">CLOSE</div>'
         for (let key in resp) {
             if (resp.hasOwnProperty(key)) {
                 scoreboardHTML += '<div class="playerscoreboard">'
@@ -207,8 +210,22 @@ var main = (function () {
         scoreboardHTML += '</div>'
         $('body').append(scoreboardHTML)
 
-        $('.closebutton').on('click', function () {
+        $('#closebutton').on('click', function () {
             $('#scoreboard').remove()
+        })
+    })
+
+    gameSocket.on('game_solution', function (msg) {
+        resp = JSON.parse(msg)
+        solutionboardHTML = '<div id ="solutionboard"><div id="closebutton">CLOSE</div><ul>'
+        for (let i = 0; i < resp.length; i++) {
+            solutionboardHTML += '<li>' + resp[i] + '</li>'
+        }
+        solutionboardHTML += '</ul></div>'
+        $('body').append(solutionboardHTML)
+
+        $('#closebutton').on('click', function () {
+            $('#solutionboard').remove()
         })
     })
 

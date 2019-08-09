@@ -1,5 +1,5 @@
 #leftcontainer {
-    width: 55%;
+    width: 50%;
     float: left;
     /* border: 2px solid red; */
 }
@@ -36,7 +36,15 @@
     border: 3px solid black;
 }
 
-.closebutton {
+#solutionboard {
+    width: 80%;
+    position: absolute;
+    top: 10;
+    background-color: #4ad5ff;
+    border: 3px solid black;
+}
+
+#closebutton {
     width: 100%;
     text-align: right;
     text-decoration: underline;

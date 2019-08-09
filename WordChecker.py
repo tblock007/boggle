@@ -65,6 +65,8 @@ class WordChecker:
 
         def dfsTrieTraverse(node, visited, trieNode):            
 
+            # TODO: handle double letters
+
             c = self.letters[node].lower()
             if c not in trieNode.children.keys():
                 return []

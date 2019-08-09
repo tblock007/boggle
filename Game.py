@@ -77,4 +77,7 @@ class Game:
 
         return json.dumps(results)
 
-    
+    def solve(self):
+        words = [w for w in self.checker.findAllWords() if len(w) >= self.minimumLetters]
+        words.sort(key = (lambda x: (-1 * len(x), x)))
+        return json.dumps(words)
