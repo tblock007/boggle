@@ -21,32 +21,36 @@ def handle_connection(methods = ['GET', 'POST']):
 
 @socketio.on('disconnect')
 def handle_disconnection(methods = ['GET', 'POST']):
+    global games
     print('\n** USER UPDATE: {0} disconnected\n'.format(request.sid))
     for gid in games.keys():
         games[gid].removePlayer(request.sid)
-        if games[gid].numPlayers() == 0:
-            del games[gid]
+    games = { i:g for i,g in games.items() if g.numPlayers() > 0 }
 
 @socketio.on('game_creation')
 def handle_game_creation_event(json, methods = ['GET', 'POST']):
 
     gid = json['gid']
     ogid = json['old_gid']
-    if ogid:        
+
+    if gid in games.keys():
+        emit('game_creation_response', '{ "response": "NOTUNIQUE" }')
+        return
+
+    if len(games) >= GAMELIMIT:
+        emit('game_creation_response', '{ "response": "TOOMANY" }')
+        return
+
+    if ogid and ogid != gid and ogid in games.keys():        
         leave_room(str(ogid))
         games[ogid].removePlayer(request.sid)
         if games[ogid].numPlayers() == 0:
             del games[ogid]
 
-    if gid in games.keys():
-        emit('game_creation_response', '{ "response": "NOTUNIQUE" }')
-    elif len(games) >= GAMELIMIT:
-        emit('game_creation_response', '{ "response": "TOOMANY" }')
-    else:
-        games[gid] = Game(gid, 4, True, englishDictionary) # these will be obtained from response eventually
-        join_room(str(gid))
-        games[gid].addPlayer(request.sid)
-        emit('game_creation_response', '{{ "response": "OK", {0} }}'.format(str(games[gid])))
+    games[gid] = Game(gid, 4, True, englishDictionary) # these will be obtained from response eventually
+    join_room(str(gid))
+    games[gid].addPlayer(request.sid)
+    emit('game_creation_response', '{{ "response": "OK", {0} }}'.format(str(games[gid])))
 
 
 @socketio.on('game_join')
@@ -54,18 +58,24 @@ def handle_game_join_event(json, methods = ['GET', 'POST']):
 
     gid = json['gid']
     ogid = json['old_gid']
-    if ogid:
+
+    if gid not in games.keys():
+        emit('game_join_response', '{ "response": "DOESNOTEXIST" }')
+        return
+
+    if ogid and ogid == gid:
+        emit('game_join_response', '{ "response": "ALREADYJOINED" }')
+        return
+
+    if ogid and ogid != gid and ogid in games.keys():
         leave_room(str(ogid))
         games[ogid].removePlayer(request.sid)
         if games[ogid].numPlayers() == 0:
             del games[ogid]
-
-    if gid not in games.keys():
-        emit('game_join_response', '{ "response": "DOESNOTEXIST" }')
-    else:
-        join_room(str(gid))
-        games[gid].addPlayer(request.sid)
-        emit('game_join_response', '{{ "response": "OK", {0} }}'.format(str(games[gid])))
+           
+    join_room(str(gid))
+    games[gid].addPlayer(request.sid)
+    emit('game_join_response', '{{ "response": "OK", {0} }}'.format(str(games[gid])))
 
 
 @socketio.on('board_gen')

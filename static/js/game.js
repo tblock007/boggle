@@ -154,6 +154,9 @@ var main = (function () {
         else if (resp.response == 'DOESNOTEXIST') {
             log_message('Server', 'Error: game does not exist.')
         }
+        else if (resp.response == 'ALREADYJOINED') {
+            log_message('Server', 'Already in this game.')
+        }
     })
 
     gameSocket.on('user_join_response', function (msg) {
