@@ -65,19 +65,33 @@ class WordChecker:
 
         def dfsTrieTraverse(node, visited, trieNode):            
 
-            # TODO: handle double letters
-
-            c = self.letters[node].lower()
-            if c not in trieNode.children.keys():
-                return []
-
             result = []
-            if trieNode.children[c].valid:
+
+            # check to ensure that including this cube might still be contributing to a valid word
+            # if not (i.e., if it does not exist in the PrefixTrie), we can return an empty list
+            # if so, advance down the PrefixTrie to account for these letters
+            c = self.letters[node].lower()
+            if len(c) == 1:
+                if c not in trieNode.children.keys():
+                    return result
+                nextNode = trieNode.children[c]
+            elif len(c) == 2:
+                if c[0] not in trieNode.children.keys():
+                    return result
+                if c[1] not in trieNode.children[c[0]].children.keys():
+                    return result
+                nextNode = trieNode.children[c[0]].children[c[1]]
+
+            # if we end up at a valid word, add it to the results
+            if nextNode.valid:
                 result.append(c)
 
+            # dfs along the grid by visiting each neighboring cube that has not yet been visited
+            # construct the result list by appending the current cube to the list returned by the 
+            # subproblem recursive call
             for neighbor in self.adjList[node]:
                 if not visited[neighbor]:
-                    suffixes = dfsTrieTraverse(neighbor, [True if i == node else visited[i] for i in range(len(visited))], trieNode.children[c])
+                    suffixes = dfsTrieTraverse(neighbor, [True if i == node else visited[i] for i in range(len(visited))], nextNode)
                     result.extend(map(lambda suffix: c + suffix, suffixes))
 
             return result

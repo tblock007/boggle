@@ -43,7 +43,7 @@ def handle_game_creation_event(json, methods = ['GET', 'POST']):
     elif len(games) >= GAMELIMIT:
         emit('game_creation_response', '{ "response": "TOOMANY" }')
     else:
-        games[gid] = Game(gid, 4, False, englishDictionary) # these will be obtained from response eventually
+        games[gid] = Game(gid, 4, True, englishDictionary) # these will be obtained from response eventually
         join_room(str(gid))
         games[gid].addPlayer(request.sid)
         emit('game_creation_response', '{{ "response": "OK", {0} }}'.format(str(games[gid])))
