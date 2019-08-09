@@ -60,3 +60,29 @@ class WordChecker:
                 if dfs(i, word, [False for _ in range(len(self.adjList))]):
                     return True
         return False
+
+    def findAllWords(self):
+
+        def dfsTrieTraverse(node, visited, trieNode):            
+
+            c = self.letters[node].lower()
+            if c not in trieNode.children.keys():
+                return []
+
+            result = []
+            if trieNode.children[c].valid:
+                result.append(c)
+
+            for neighbor in self.adjList[node]:
+                if not visited[neighbor]:
+                    suffixes = dfsTrieTraverse(neighbor, [True if i == node else visited[i] for i in range(len(visited))], trieNode.children[c])
+                    result.extend(map(lambda suffix: c + suffix, suffixes))
+
+            return result
+
+
+        words = []
+        for i in range(len(self.letters)):
+            words.extend(dfsTrieTraverse(i, [False for _ in range(len(self.adjList))], self.validWords.root))
+        return set(words)
+
