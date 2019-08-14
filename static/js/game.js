@@ -9,12 +9,11 @@ function log_message(usr, msg) {
 }
 
 function draw_board(grid, width, height) {
-    board = grid.split(',')
     html = ''
     var i = 0
     for (let row = 0; row < height; row++) {
         for (let col = 0; col < width; col++) {
-            html += '<div class="lettercontainer"><div class="letter">' + board[i] + '</div></div>'
+            html += '<div class="lettercontainer"><div class="letter">' + grid[i] + '</div></div>'
             i++
         }
     }

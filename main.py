@@ -13,6 +13,10 @@ socketio = SocketIO(app)
 def render_client():
     return render_template("home.html")
 
+@app.route("/game")
+def render_game():
+    return render_template("game.html")
+
 
 @socketio.on('connect')
 def handle_connection(methods = ['GET', 'POST']):
@@ -127,5 +131,5 @@ if __name__ == "__main__":
 
     games = dict()
 
-    #socketio.run(app, debug=True)
-    socketio.run(app, host='0.0.0.0', debug=False)
+    socketio.run(app, debug=True)
+    #socketio.run(app, host='0.0.0.0', debug=False)

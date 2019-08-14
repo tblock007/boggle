@@ -22,7 +22,7 @@ class Game:
 
 
     def __str__(self):
-        return '"gid": "{0}", "width": {1}, "height": {2}, "grid": "{3}"'.format(self.gid, self.width, self.height, ','.join(self.grid))
+        return '"gid": "{0}", "width": {1}, "height": {2}, "grid": [{3}]'.format(self.gid, self.width, self.height, ','.join('"{0}"'.format(l) for l in self.grid))
 
 
     def newRound(self):
