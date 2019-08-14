@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Boggle Client v0.2</title>
+    <link rel= "stylesheet" type= "text/css" href="{{ url_for('static', filename='css/client.css') }}">
+  </head>
+  <body>
+    
+    <div id="root"></div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.1.0/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.1.0/react-dom.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+    <script type="text/jsx" src="{{ url_for('static', filename='js/game-area.js') }}"></script>
+      
+  </body>
+</html>
