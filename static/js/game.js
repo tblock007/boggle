@@ -70,7 +70,12 @@ var main = (function () {
             if (game_id !== '') {
                 gameSocket.emit('game_creation', {
                     old_gid: gameGid,
-                    gid: game_id
+                    gid: game_id,
+                    height: 5,
+                    width: 5,
+                    minimumLetters: 4,
+                    includeDoubleLetterCube: true,
+                    language: "English"
                 })
                 $('#creategameid').val('')
             }

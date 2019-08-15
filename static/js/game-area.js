@@ -140,19 +140,39 @@ class App extends React.Component {
 
     componentDidMount() {
         this.state.socket = io.connect("http://" + document.domain + ":" + location.port);
+        this.state.socket.on("game_creation_response", msg => { alert(msg); this.handleGameCreationResponse(JSON.parse(msg)); });
         this.state.socket.on("game_join_response", msg => this.handleGameJoinResponse(JSON.parse(msg)));      
         this.state.socket.on("new_board", msg => this.updateBoard(JSON.parse(msg)));
+        this.state.socket.on("game_result", () => {});
+        this.state.socket.on("game_solution", () => {});
         this.state.socket.on("incoming_message", resp => { 
             this.log(resp.username, resp.message); 
             $('.messages').scrollTop($('.messages')[0].scrollHeight + 300);
         });
+        this.state.socket.on("list_request", () => { 
+            this.state.socket.emit("list_submit", {
+                username: this.state.username,
+                gid: this.state.gid,
+                list: this.state.words
+            });
+        });
 
 
-        // temporary auto join until join functionality is implemented
-        this.state.socket.emit("game_join", {
+        // temporary auto join or create until join functionality is implemented
+        // this.state.socket.emit("game_join", {
+        //     old_gid: "0",
+        //     gid: "123"
+        // });
+
+        this.state.socket.emit("game_creation", {
+            gid: "123",
             old_gid: "0",
-            gid: "123"
-        })
+            height: 6,
+            width: 6,
+            minimumLetters: 5,
+            includeDoubleLetterCube: true,
+            language: "English"
+        });
     }
 
     padzero(n) {
@@ -167,6 +187,19 @@ class App extends React.Component {
             sender: sender,
             content: message
         }])});
+    }
+
+    handleGameCreationResponse(resp) {
+        if (resp.response == "OK") {
+            this.updateBoard(resp);
+            this.log("Server", "Successfully joined game " + resp.gid);
+        }
+        else if (resp.response == "NOTUNIQUE") {
+            this.log("Server", "Game already exists.");
+        }
+        else if (resp.response == "TOOMANY") {
+            this.log("Server", "Game limit reached.  Please wait before attempting to create a game.");
+        }
     }
 
     handleGameJoinResponse(resp) {
