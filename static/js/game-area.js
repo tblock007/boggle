@@ -155,10 +155,15 @@ class App extends React.Component {
         })
     }
 
+    padzero(n) {
+        if (n <= 9) return ("0" + n.toString());
+        return n.toString();
+    }
+
     log(sender, message) {
         let now = new Date();
         this.setState({ messages: this.state.messages.concat([{
-            timestamp: now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds(),
+            timestamp: this.padzero(now.getHours()) + ":" + this.padzero(now.getMinutes()) + ":" + this.padzero(now.getSeconds()),
             sender: sender,
             content: message
         }])});
