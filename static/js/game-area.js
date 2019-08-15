@@ -142,7 +142,10 @@ class App extends React.Component {
         this.state.socket = io.connect("http://" + document.domain + ":" + location.port);
         this.state.socket.on("game_join_response", msg => this.handleGameJoinResponse(JSON.parse(msg)));      
         this.state.socket.on("new_board", msg => this.updateBoard(JSON.parse(msg)));
-        this.state.socket.on("incoming_message", resp => { this.log(resp.username, resp.message); })
+        this.state.socket.on("incoming_message", resp => { 
+            this.log(resp.username, resp.message); 
+            $('.messages').scrollTop($('.messages')[0].scrollHeight + 300);
+        });
 
 
         // temporary auto join until join functionality is implemented
