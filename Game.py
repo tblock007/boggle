@@ -8,10 +8,10 @@ from collections import Counter
 
 class Game:
 
-    def __init__(self, gid, minimumLetters, includeDoubleLetterCube, validWords):
+    def __init__(self, gid, height, width, minimumLetters, includeDoubleLetterCube, validWords):
         self.gid = gid
-        self.width = 5
-        self.height = 5
+        self.width = width
+        self.height = height
         self.players = set()
         self.wordLists = dict()
         self.playerNames = dict()

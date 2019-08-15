@@ -36,6 +36,11 @@ def handle_game_creation_event(json, methods = ['GET', 'POST']):
 
     gid = json['gid']
     ogid = json['old_gid']
+    height = json['height']
+    width = json['width']
+    minLetters = json['minimumLetters']
+    includeDoubleLetterCube = json['includeDoubleLetterCube']
+    language = json['language']
 
     if gid in games.keys():
         emit('game_creation_response', '{ "response": "NOTUNIQUE" }')
@@ -51,7 +56,7 @@ def handle_game_creation_event(json, methods = ['GET', 'POST']):
         if games[ogid].numPlayers() == 0:
             del games[ogid]
 
-    games[gid] = Game(gid, 4, True, englishDictionary) # these will be obtained from response eventually
+    games[gid] = Game(gid, height, width, minLetters, includeDoubleLetterCube, frenchDictionary if language == 'French' else englishDictionary)
     join_room(str(gid))
     games[gid].addPlayer(request.sid)
     emit('game_creation_response', '{{ "response": "OK", {0} }}'.format(str(games[gid])))
