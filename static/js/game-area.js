@@ -140,11 +140,11 @@ class App extends React.Component {
 
     componentDidMount() {
         this.state.socket = io.connect("http://" + document.domain + ":" + location.port);
-        this.state.socket.on("game_creation_response", msg => { alert(msg); this.handleGameCreationResponse(JSON.parse(msg)); });
+        this.state.socket.on("game_creation_response", msg => this.handleGameCreationResponse(JSON.parse(msg)));
         this.state.socket.on("game_join_response", msg => this.handleGameJoinResponse(JSON.parse(msg)));      
         this.state.socket.on("new_board", msg => this.updateBoard(JSON.parse(msg)));
-        this.state.socket.on("game_result", () => {});
-        this.state.socket.on("game_solution", () => {});
+        this.state.socket.on("game_result", () => {}); // TODO
+        this.state.socket.on("game_solution", () => {}); // TODO
         this.state.socket.on("incoming_message", resp => { 
             this.log(resp.username, resp.message); 
             $('.messages').scrollTop($('.messages')[0].scrollHeight + 300);
@@ -159,17 +159,18 @@ class App extends React.Component {
 
 
         // temporary auto join or create until join functionality is implemented
+
         // this.state.socket.emit("game_join", {
         //     old_gid: "0",
         //     gid: "123"
         // });
 
         this.state.socket.emit("game_creation", {
-            gid: "123",
+            gid: "123567",
             old_gid: "0",
-            height: 6,
-            width: 6,
-            minimumLetters: 5,
+            height: 5,
+            width: 5,
+            minimumLetters: 4,
             includeDoubleLetterCube: true,
             language: "English"
         });
