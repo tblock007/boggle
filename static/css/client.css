@@ -8,9 +8,16 @@
     border: 2px solid blue;
 }
 
-.messages {
+.chat {
     margin: 20px;
     border: 2px solid blue;
+}
+
+.messages {
+  margin: 0;
+  padding: 0;
+  height: 250px;
+  overflow-y: scroll;
 }
 
 body {

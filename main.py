@@ -120,6 +120,13 @@ def handle_list_submit(json, methods = ['GET', 'POST']):
         result = games[gid].roundResult()
         emit('game_result', result, room = str(gid))
 
+@socketio.on('new_message')
+def handle_new_message(json, methods = ['GET', 'POST']):
+    gid = json['gid']
+    
+    print('\n\n NEW MESSAGE {0}\n\n'.format(json['message']))
+    emit('incoming_message', json, room = str(gid))
+
 
 if __name__ == "__main__":    
 

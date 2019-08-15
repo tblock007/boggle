@@ -87,6 +87,16 @@ class Game extends React.Component {
 
 class ControlPanel extends React.Component {
 
+    handleKeyDown(e) {
+        if (e.keyCode == 13) { // the enter key code    
+            let msg = $('#writemessage').val();
+            if (msg !== '') {
+                $('#writemessage').val('')            
+                this.props.onEnter(msg);
+            }
+        }
+    }
+
     render() {
         const status = (this.props.gid === null) ? "Not connected to a game" : "Currently connected to game " + this.props.gid;
         const messages = this.props.messages.map((m, index) => {
@@ -100,8 +110,11 @@ class ControlPanel extends React.Component {
                 <div className="control">
                     {status}
                 </div>
-                <div className="messages">
-                    {messages}
+                <div className="chat">
+                    <input type="text" id="writemessage" onKeyDown={(e) => this.handleKeyDown(e)} placeholder="Send message" style={{ width: "99.5%" }} />
+                    <div className="messages">
+                        {messages}
+                    </div>
                 </div>
             </div>
         );
@@ -114,24 +127,26 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            username: "null",
             gid: null,
             height: null,
             width: null,
             letters: [],
             words: [],
-            messages: []
+            messages: [],
+            socket: null
         };
     }
 
     componentDidMount() {
-        const socket = io.connect("http://" + document.domain + ":" + location.port);
-        socket.on("game_join_response", msg => this.handleGameJoinResponse(JSON.parse(msg)));      
-        socket.on("new_board", msg => this.updateBoard(JSON.parse(msg)));
-        socket.on("incoming_message", msg => { let resp = JSON.parse(msg); this.log(resp.sender, resp.content); })
+        this.state.socket = io.connect("http://" + document.domain + ":" + location.port);
+        this.state.socket.on("game_join_response", msg => this.handleGameJoinResponse(JSON.parse(msg)));      
+        this.state.socket.on("new_board", msg => this.updateBoard(JSON.parse(msg)));
+        this.state.socket.on("incoming_message", resp => { this.log(resp.username, resp.message); })
 
 
         // temporary auto join until join functionality is implemented
-        socket.emit("game_join", {
+        this.state.socket.emit("game_join", {
             old_gid: "0",
             gid: "123"
         })
@@ -171,6 +186,14 @@ class App extends React.Component {
         this.setState({ words: this.state.words.slice(1)});
     }
 
+    sendMessage(msg) {
+        this.state.socket.emit('new_message', { 
+            gid: this.state.gid, 
+            username: this.state.username, 
+            message: msg
+        });
+    }
+
     render() {
         return (
             <div>
@@ -185,6 +208,7 @@ class App extends React.Component {
                 <ControlPanel 
                     gid={this.state.gid}
                     messages={this.state.messages}
+                    onEnter={(msg) => this.sendMessage(msg)}
                 />
             </div>
         )
