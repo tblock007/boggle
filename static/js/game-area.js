@@ -28,17 +28,25 @@ function Board(props) {
 
 class WordInput extends React.Component {
 
+    constructor(props) {
+        super(props);
+        this.state = { word: "" };
+    }
+
     handleKeyDown(e) {
         if (e.keyCode == 13) { // the enter key code    
-            let w = $('#writeword').val().toUpperCase();
-            if (w !== '') {
-                $('#writeword').val('')            
-                this.props.onEnter(w);
+            if (this.state.word !== "") {
+                this.setState({ word: "" });
+                this.props.onEnter(this.state.word);
             }
         }
         else if (e.keyCode == 46) { // the delete key code
             this.props.onDel();
         }
+    }
+
+    updateValue(e) {
+        this.setState({ word: e.target.value });
     }
 
     render() {
@@ -48,7 +56,7 @@ class WordInput extends React.Component {
 
         return (
             <div>
-                <input type="text" id="writeword" onKeyDown={(e) => this.handleKeyDown(e)} placeholder="Found Word" />
+                <input type="text" value={this.state.word} onKeyDown={(e) => this.handleKeyDown(e)} onChange={(e) => this.updateValue(e)} />
                 <div id="wordlist">
                     <ul>{list}</ul>
                 </div>
@@ -87,14 +95,22 @@ class Game extends React.Component {
 
 class ControlPanel extends React.Component {
 
+    constructor(props) {
+        super(props);
+        this.state = { message: "" };
+    }
+
     handleKeyDown(e) {
-        if (e.keyCode == 13) { // the enter key code    
-            let msg = $('#writemessage').val();
-            if (msg !== '') {
-                $('#writemessage').val('')            
-                this.props.onEnter(msg);
+        if (e.keyCode == 13) { // the enter key code   
+            if (this.state.message !== "") {
+                this.setState({ message: "" });            
+                this.props.onEnter(this.state.message);
             }
         }
+    }
+
+    updateMessage(e) {
+        this.setState({ message: e.target.value });
     }
 
     render() {
@@ -111,7 +127,7 @@ class ControlPanel extends React.Component {
                     {status}
                 </div>
                 <div className="chat">
-                    <input type="text" id="writemessage" onKeyDown={(e) => this.handleKeyDown(e)} placeholder="Send message" style={{ width: "99.5%" }} />
+                    <input type="text" value={this.state.message} onKeyDown={(e) => this.handleKeyDown(e)} onChange={(e) => this.updateMessage(e)} style={{ width: "99.5%" }} />
                     <div className="messages">
                         {messages}
                     </div>
@@ -160,20 +176,20 @@ class App extends React.Component {
 
         // temporary auto join or create until join functionality is implemented
 
-        // this.state.socket.emit("game_join", {
-        //     old_gid: "0",
-        //     gid: "123"
-        // });
-
-        this.state.socket.emit("game_creation", {
-            gid: "123567",
+        this.state.socket.emit("game_join", {
             old_gid: "0",
-            height: 5,
-            width: 5,
-            minimumLetters: 4,
-            includeDoubleLetterCube: true,
-            language: "English"
+            gid: "123"
         });
+
+        // this.state.socket.emit("game_creation", {
+        //     gid: "123",
+        //     old_gid: "0",
+        //     height: 5,
+        //     width: 5,
+        //     minimumLetters: 4,
+        //     includeDoubleLetterCube: true,
+        //     language: "English"
+        // });
     }
 
     padzero(n) {
@@ -221,7 +237,7 @@ class App extends React.Component {
     }
 
     addWord(w) {
-        this.setState({ words: [w].concat(this.state.words)});
+        this.setState({ words: [w.toUpperCase()].concat(this.state.words)});
     }
 
     removeWord() {
