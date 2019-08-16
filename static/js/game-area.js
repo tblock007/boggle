@@ -97,16 +97,29 @@ class ControlPanel extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { message: "" };
+        this.state = { command: "", message: "" };
     }
 
-    handleKeyDown(e) {
+    handleKeyDownCommand(e) {
+        if (e.keyCode == 13) { // the enter key code
+            if (this.state.command !== "") {
+                this.setState({ command: "" });
+                this.props.onEnterCommand(this.state.command);
+            }
+        }
+    }
+
+    handleKeyDownMessage(e) {
         if (e.keyCode == 13) { // the enter key code   
             if (this.state.message !== "") {
                 this.setState({ message: "" });            
-                this.props.onEnter(this.state.message);
+                this.props.onEnterMessage(this.state.message);
             }
         }
+    }
+
+    updateCommand(e) {
+        this.setState({ command: e.target.value });
     }
 
     updateMessage(e) {
@@ -125,9 +138,14 @@ class ControlPanel extends React.Component {
             <div>
                 <div className="control">
                     {status}
+                    <input type="text" value={this.state.command} onKeyDown={(e) => this.handleKeyDownCommand(e)} onChange={(e) => this.updateCommand(e)} style={{ width: "99.5%" }} />
+                    Command format:<br />
+                    CREATE GID HEIGHT WIDTH MINLETTERS INCLUDEDOUBLE LANGUAGE<br />
+                    JOIN GID<br />
+                    e.g., CREATE game5293 5 5 4 Yes English
                 </div>
                 <div className="chat">
-                    <input type="text" value={this.state.message} onKeyDown={(e) => this.handleKeyDown(e)} onChange={(e) => this.updateMessage(e)} style={{ width: "99.5%" }} />
+                    <input type="text" value={this.state.message} onKeyDown={(e) => this.handleKeyDownMessage(e)} onChange={(e) => this.updateMessage(e)} style={{ width: "99.5%" }} />
                     <div className="messages">
                         {messages}
                     </div>
@@ -172,24 +190,6 @@ class App extends React.Component {
                 list: this.state.words
             });
         });
-
-
-        // temporary auto join or create until join functionality is implemented
-
-        this.state.socket.emit("game_join", {
-            old_gid: "0",
-            gid: "123"
-        });
-
-        // this.state.socket.emit("game_creation", {
-        //     gid: "123",
-        //     old_gid: "0",
-        //     height: 5,
-        //     width: 5,
-        //     minimumLetters: 4,
-        //     includeDoubleLetterCube: true,
-        //     language: "English"
-        // });
     }
 
     padzero(n) {
@@ -244,6 +244,40 @@ class App extends React.Component {
         this.setState({ words: this.state.words.slice(1)});
     }
 
+    sendCommand(cmd) {
+        // TODO: implement a better way of issuing these commands
+        let tokens = cmd.split(" ");
+        if (tokens[0] === "CREATE") {
+            const gid = tokens[1];
+            const height = parseInt(tokens[2], 10);
+            const width = parseInt(tokens[3], 10);
+            const minLetters = parseInt(tokens[4], 10);
+            const includeDoubleLetterCube = (tokens[5] === "Yes");
+            const language = tokens[6];
+
+            this.state.socket.emit('game_creation', {
+                gid: gid,
+                old_gid: this.state.gid,
+                height: height,
+                width: width,
+                minimumLetters: minLetters,
+                includeDoubleLetterCube: includeDoubleLetterCube,
+                language: language
+            });
+        }
+        else if (tokens[0] == "JOIN") {
+            const gid = tokens[1];
+
+            this.state.socket.emit('game_join', {
+                gid: gid,
+                old_gid: this.state.gid
+            });
+        }
+        else {
+            this.log("ERROR", "Unrecognized command");
+        }
+    }
+
     sendMessage(msg) {
         this.state.socket.emit('new_message', { 
             gid: this.state.gid, 
@@ -266,7 +300,8 @@ class App extends React.Component {
                 <ControlPanel 
                     gid={this.state.gid}
                     messages={this.state.messages}
-                    onEnter={(msg) => this.sendMessage(msg)}
+                    onEnterCommand={(cmd) => this.sendCommand(cmd)}
+                    onEnterMessage={(msg) => this.sendMessage(msg)}
                 />
             </div>
         )
