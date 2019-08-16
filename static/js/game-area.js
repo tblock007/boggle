@@ -56,7 +56,7 @@ class WordInput extends React.Component {
 
         return (
             <div>
-                <input type="text" value={this.state.word} onKeyDown={(e) => this.handleKeyDown(e)} onChange={(e) => this.updateValue(e)} />
+                <input type="text" value={this.state.word} onKeyDown={(e) => this.handleKeyDown(e)} onChange={(e) => this.updateValue(e)} placeholder="Enter found words" />
                 <div id="wordlist">
                     <ul>{list}</ul>
                 </div>
@@ -127,7 +127,7 @@ class ControlPanel extends React.Component {
     }
 
     render() {
-        const status = (this.props.gid === null) ? "Not connected to a game" : "Currently connected to game " + this.props.gid;
+        const status = (this.props.gid === null) ? "Not connected to a game" : "Currently connected to game <b>" + this.props.gid + "</b>";
         const messages = this.props.messages.map((m, index) => {
             return (<div className="message" key={index}>
                         [{m.timestamp}] <b>{m.sender}</b>  : {m.content}
@@ -138,18 +138,19 @@ class ControlPanel extends React.Component {
             <div>
                 <div className="control">
                     {status}
-                    <input type="text" value={this.state.command} onKeyDown={(e) => this.handleKeyDownCommand(e)} onChange={(e) => this.updateCommand(e)} style={{ width: "99.5%" }} />
-                    Command format:<br />
-                    CREATE GID HEIGHT WIDTH MINLETTERS INCLUDEDOUBLE LANGUAGE<br />
-                    JOIN GID<br />
-                    e.g., CREATE game5293 5 5 4 Yes English
+                    <input type="text" value={this.state.command} onKeyDown={(e) => this.handleKeyDownCommand(e)} onChange={(e) => this.updateCommand(e)} placeholder="Enter command here" style={{ width: "99.5%" }} />
+                  
                 </div>
                 <div className="chat">
-                    <input type="text" value={this.state.message} onKeyDown={(e) => this.handleKeyDownMessage(e)} onChange={(e) => this.updateMessage(e)} style={{ width: "99.5%" }} />
+                    <input type="text" value={this.state.message} onKeyDown={(e) => this.handleKeyDownMessage(e)} onChange={(e) => this.updateMessage(e)} placeholder="Enter chat message here" style={{ width: "99.5%" }} />
                     <div className="messages">
                         {messages}
                     </div>
                 </div>
+                Command format:<br />
+                CREATE GID HEIGHT WIDTH MINLETTERS INCLUDEDOUBLE LANGUAGE<br />
+                JOIN GID<br />
+                e.g., CREATE game5293 5 5 4 Yes English
             </div>
         );
     }
