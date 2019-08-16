@@ -127,7 +127,7 @@ class ControlPanel extends React.Component {
     }
 
     render() {
-        const status = (this.props.gid === null) ? "Not connected to a game" : "Currently connected to game <b>" + this.props.gid + "</b>";
+        const status = (this.props.gid === null) ? "Not connected to a game" : "Currently connected to game: " + this.props.gid;
         const messages = this.props.messages.map((m, index) => {
             return (<div className="message" key={index}>
                         [{m.timestamp}] <b>{m.sender}</b>  : {m.content}
