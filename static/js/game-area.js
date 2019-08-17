@@ -97,7 +97,7 @@ class ControlPanel extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { command: "", message: "" };
+        this.state = { username: "", command: "", message: "" };
     }
 
     handleKeyDownCommand(e) {
@@ -116,6 +116,11 @@ class ControlPanel extends React.Component {
                 this.props.onEnterMessage(this.state.message);
             }
         }
+    }
+
+    updateUsername(e) {
+        this.setState({ username: e.target.value });
+        this.props.onEnterUsername(e.target.value);
     }
 
     updateCommand(e) {
@@ -138,6 +143,7 @@ class ControlPanel extends React.Component {
             <div>
                 <div className="control">
                     {status}
+                    <input type="text" value={this.state.username} onChange={(e) => this.updateUsername(e)} placeholder="Enter username" style={{ width: "99.5%" }} />
                     <input type="text" value={this.state.command} onKeyDown={(e) => this.handleKeyDownCommand(e)} onChange={(e) => this.updateCommand(e)} placeholder="Enter command here" style={{ width: "99.5%" }} />
                   
                 </div>
@@ -162,7 +168,7 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: "null",
+            username: null,
             gid: null,
             height: null,
             width: null,
@@ -301,6 +307,7 @@ class App extends React.Component {
                 <ControlPanel 
                     gid={this.state.gid}
                     messages={this.state.messages}
+                    onEnterUsername={(usr) => this.setState({ username: usr })}
                     onEnterCommand={(cmd) => this.sendCommand(cmd)}
                     onEnterMessage={(msg) => this.sendMessage(msg)}
                 />
