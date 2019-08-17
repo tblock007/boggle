@@ -1,31 +1,3 @@
-function Square(props) {
-
-    return (
-        <button className="square">
-            {props.letter}
-        </button>
-    );
-
-}
-
-function Board(props) {
-
-    const rows = []
-    for (let i = 0; i < props.height; i++) {
-        const squares = []
-        for (let j = 0; j < props.width; j++) {
-            index = i * props.width + j;
-            let l = props.letters[index];
-            squares.push(<Square letter={l} key={index} />)
-        }
-        rows.push(<div className="board-row" key={i}>{squares}</div>)
-    }
-
-    return (<div>{rows}</div>)
-
-}
-
-
 class WordInput extends React.Component {
 
     constructor(props) {
@@ -65,6 +37,34 @@ class WordInput extends React.Component {
     }
 }
 
+
+function Square(props) {
+
+    return (
+        <button className="square">
+            {props.letter}
+        </button>
+    );
+}
+
+
+function Board(props) {
+
+    const rows = []
+    for (let i = 0; i < props.height; i++) {
+        const squares = []
+        for (let j = 0; j < props.width; j++) {
+            index = i * props.width + j;
+            let l = props.letters[index];
+            squares.push(<Square letter={l} key={index} />)
+        }
+        rows.push(<div className="board-row" key={i}>{squares}</div>)
+    }
+
+    return (<div>{rows}</div>)
+}
+
+
 class Game extends React.Component {
     
     render() {
@@ -91,6 +91,11 @@ class Game extends React.Component {
         );
     }
 }
+
+
+
+
+
 
 
 class ControlPanel extends React.Component {
