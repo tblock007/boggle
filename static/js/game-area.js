@@ -181,6 +181,7 @@ class App extends React.Component {
 
     componentDidMount() {
         this.state.socket = io.connect("http://" + document.domain + ":" + location.port);
+        this.state.socket.on("user_join_response", () => this.log("Server", "Welcome to the Boggle server! Please ensure you set your username."));
         this.state.socket.on("game_creation_response", msg => this.handleGameCreationResponse(JSON.parse(msg)));
         this.state.socket.on("game_join_response", msg => this.handleGameJoinResponse(JSON.parse(msg)));      
         this.state.socket.on("new_board", msg => this.updateBoard(JSON.parse(msg)));
