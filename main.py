@@ -110,7 +110,8 @@ def handle_end_game(json, methods = ['GET', 'POST']):
 def handle_end_game(json, methods = ['GET', 'POST']):
 
     gid = json['gid']
-    result = games[gid].solve()   
+    result = {}
+    result['wordlist'] = games[gid].solve()   
     emit('game_solution', result, room = str(gid))
 
 @socketio.on('list_submit')
@@ -122,7 +123,8 @@ def handle_list_submit(json, methods = ['GET', 'POST']):
 
     games[gid].setList(request.sid, username, wordList)
     if (games[gid].allListsSubmitted()):
-        result = games[gid].roundResult()
+        result = {}
+        result['results'] = games[gid].roundResult()
         emit('game_result', result, room = str(gid))
 
 @socketio.on('new_message')

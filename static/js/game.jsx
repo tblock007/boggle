@@ -173,14 +173,55 @@ class ControlPanel extends React.Component {
 class Modal extends React.Component {
 
     render () {
-        if (this.props.children === null) {
+        if (this.props.content === null) {
             return null;
         }
+
+        let content = null;
+        if (this.props.content.hasOwnProperty("wordlist")) {
+            const wl = this.props.content.wordlist;
+            const listcontent = wl.map((word, index) => {
+                return (<li key={index}>{word}</li>);
+            });
+            content = (<ul>{listcontent}</ul>);
+        }
+        else if (this.props.content.hasOwnProperty("results")) {
+            const results = this.props.content.results;
+
+            let playerResults = [];
+            for (let player in results) {
+                if (results.hasOwnProperty(player)) {
+
+                    let playerlistInvalid = results[player].invalid.map((word, index) => {
+                        return (<li key={"invalid" + index.toString()}><s>{word} ???</s></li>);
+                    });
+
+                    let playerlistStruck = results[player].struck.map((word, index) => {
+                        return (<li key={"struck" + index.toString()}><s>{word}</s></li>);
+                    });
+
+                    let playerlistScored = results[player].scored.map((word, index) => {
+                        return (<li key={"scored" + index.toString()}><div className="wordscore">{results[player].scores[index]}</div> {word}</li>);
+                    });
+
+                    playerResults.push(
+                        <div className="playerscoreboard">
+                            {player}:<br />
+                            Score: {results[player].totalScore}<br />
+                            <ul>{playerlistInvalid.concat(playerlistStruck, playerlistScored)}</ul>
+                        </div>
+                    );
+                }
+            }
+
+            content = playerResults;
+        }
+
 
         return (
             <div className="modal-backdrop" onClick={() => this.props.onModalClicked()}>
                 <div className="modal-content">
-                    {this.props.children}
+                    {content}
                 </div>
             </div>
         );
@@ -212,14 +253,13 @@ class App extends React.Component {
         this.state.socket.on("game_creation_response", msg => this.handleGameCreationResponse(JSON.parse(msg)));
         this.state.socket.on("game_join_response", msg => this.handleGameJoinResponse(JSON.parse(msg)));      
         this.state.socket.on("new_board", msg => this.updateBoard(JSON.parse(msg)));
-        this.state.socket.on("game_result", (result) => {console.log("result received"); this.showModal(result);});
+        this.state.socket.on("game_result", (result) => this.showModal(result));
         this.state.socket.on("game_solution", (list) => this.showModal(list));
         this.state.socket.on("incoming_message", resp => { 
             this.log(resp.username, resp.message); 
             $('.messages').scrollTop($('.messages')[0].scrollHeight + 300);
         });
         this.state.socket.on("list_request", () => { 
-            console.log('LIST REQUEST RECEIVED');
             this.state.socket.emit("list_submit", {
                 username: this.state.username,
                 gid: this.state.gid,
@@ -332,8 +372,8 @@ class App extends React.Component {
         });
     }
 
-    showModal(list) {
-        this.setState({ modalMessage: list.toString() });
+    showModal(content) {
+        this.setState({ modalMessage: content });
     }
 
     render() {
@@ -354,9 +394,7 @@ class App extends React.Component {
                     onEnterCommand={(cmd) => this.sendCommand(cmd)}
                     onEnterMessage={(msg) => this.sendMessage(msg)}
                 />
-                <Modal onModalClicked={() => this.setState({ modalMessage: null })}>
-                    {this.state.modalMessage}
-                </Modal>
+                <Modal content={this.state.modalMessage} onModalClicked={() => this.setState({ modalMessage: null })} />
             </div>
         )
     }

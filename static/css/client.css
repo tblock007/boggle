@@ -93,9 +93,25 @@ body {
 
 .modal-content {
     border-radius: 5;
-    max-width: 500;
-    min-height: 300;
-    margin: 0 auto;
+    width: 50%;
+    height: 50%;
+    margin-top: 100;
+    margin-left: auto;
+    margin-right: auto;
     background-color: white;
     padding: 30;    
+    overflow-y: scroll;
+}
+
+.playerscoreboard {
+  float: left;
+  padding: 50;
+  overflow-y: scroll;
+}
+
+
+.wordscore {
+  display: inline;
+  font-weight: bold;
+  color: red;
 }

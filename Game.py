@@ -86,10 +86,10 @@ class Game:
             results[name]["scores"] = [score(w) for w in results[name]["scored"]]
             results[name]["totalScore"] = sum(results[name]["scores"])
 
-        return json.dumps(results)
+        return results
 
 
     def solve(self):
         words = [w for w in self.checker.findAllWords() if len(w) >= self.minimumLetters]
         words.sort(key = (lambda x: (-1 * len(x), x)))
-        return json.dumps(words)
+        return words
