@@ -75,8 +75,27 @@ body {
   
 #wordlist {
     height: 500px;
-    overflow-y: scroll; /* fix this */
+    overflow-y: scroll;
 }
 
-  .messages {
-  }
+.messages {
+}
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0,0,0,0.3);
+    padding: 50;
+}
+
+.modal-content {
+    border-radius: 5;
+    max-width: 500;
+    min-height: 300;
+    margin: 0 auto;
+    background-color: white;
+    padding: 30;    
+}

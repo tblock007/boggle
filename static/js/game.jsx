@@ -161,7 +161,27 @@ class ControlPanel extends React.Component {
                 Command format:<br />
                 CREATE GID HEIGHT WIDTH MINLETTERS INCLUDEDOUBLE LANGUAGE<br />
                 JOIN GID<br />
+                SOLVE<br />
+                END<br />
                 e.g., CREATE game5293 5 5 4 Yes English
+            </div>
+        );
+    }
+}
+
+
+class Modal extends React.Component {
+
+    render () {
+        if (this.props.children === null) {
+            return null;
+        }
+
+        return (
+            <div className="modal-backdrop" onClick={() => this.props.onModalClicked()}>
+                <div className="modal-content">
+                    {this.props.children}
+                </div>
             </div>
         );
     }
@@ -180,7 +200,9 @@ class App extends React.Component {
             letters: [],
             words: [],
             messages: [],
-            socket: null
+            socket: null,
+
+            modalMessage: null
         };
     }
 
@@ -190,13 +212,14 @@ class App extends React.Component {
         this.state.socket.on("game_creation_response", msg => this.handleGameCreationResponse(JSON.parse(msg)));
         this.state.socket.on("game_join_response", msg => this.handleGameJoinResponse(JSON.parse(msg)));      
         this.state.socket.on("new_board", msg => this.updateBoard(JSON.parse(msg)));
-        this.state.socket.on("game_result", () => {}); // TODO
-        this.state.socket.on("game_solution", () => {}); // TODO
+        this.state.socket.on("game_result", (result) => {console.log("result received"); this.showModal(result);});
+        this.state.socket.on("game_solution", (list) => this.showModal(list));
         this.state.socket.on("incoming_message", resp => { 
             this.log(resp.username, resp.message); 
             $('.messages').scrollTop($('.messages')[0].scrollHeight + 300);
         });
         this.state.socket.on("list_request", () => { 
+            console.log('LIST REQUEST RECEIVED');
             this.state.socket.emit("list_submit", {
                 username: this.state.username,
                 gid: this.state.gid,
@@ -309,6 +332,10 @@ class App extends React.Component {
         });
     }
 
+    showModal(list) {
+        this.setState({ modalMessage: list.toString() });
+    }
+
     render() {
         return (
             <div>
@@ -327,6 +354,9 @@ class App extends React.Component {
                     onEnterCommand={(cmd) => this.sendCommand(cmd)}
                     onEnterMessage={(msg) => this.sendMessage(msg)}
                 />
+                <Modal onModalClicked={() => this.setState({ modalMessage: null })}>
+                    {this.state.modalMessage}
+                </Modal>
             </div>
         )
     }
