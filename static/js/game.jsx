@@ -260,12 +260,12 @@ class App extends React.Component {
     sendCommand(cmd) {
         // TODO: implement a better way of issuing these commands
         let tokens = cmd.split(" ");
-        if (tokens[0] === "CREATE") {
+        if (tokens[0].toLowerCase() === "create") {
             const gid = tokens[1];
             const height = parseInt(tokens[2], 10);
             const width = parseInt(tokens[3], 10);
             const minLetters = parseInt(tokens[4], 10);
-            const includeDoubleLetterCube = (tokens[5] === "Yes");
+            const includeDoubleLetterCube = (tokens[5].toLowerCase() === "yes");
             const language = tokens[6];
 
             this.state.socket.emit('game_creation', {
@@ -278,12 +278,22 @@ class App extends React.Component {
                 language: language
             });
         }
-        else if (tokens[0] == "JOIN") {
+        else if (tokens[0].toLowerCase() === "join") {
             const gid = tokens[1];
 
             this.state.socket.emit('game_join', {
                 gid: gid,
                 old_gid: this.state.gid
+            });
+        }
+        else if (tokens[0].toLowerCase() === "solve") {
+            this.state.socket.emit('solve_game', {
+                gid: this.state.gid
+            });
+        }
+        else if (tokens[0].toLowerCase() === "end") {
+            this.state.socket.emit('end_game', {
+                gid: this.state.gid
             });
         }
         else {
