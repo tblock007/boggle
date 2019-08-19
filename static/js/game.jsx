@@ -177,8 +177,8 @@ class ModalStore extends React.Component {
     }
 
     render() {
-        return (
-            <button type="button" onClick={() => this.handleClick()}>{this.props.type}</button>
+        return (            
+            <button type="button" disabled={this.props.content === null} onClick={() => this.handleClick()}>{this.props.type}</button>
         );
     }
 }
@@ -219,7 +219,7 @@ class Modal extends React.Component {
                     });
 
                     playerResults.push(
-                        <div className="playerscoreboard">
+                        <div className="playerscoreboard" key={player}>
                             {player}:<br />
                             Score: {results[player].totalScore}<br />
                             <ul>{playerlistInvalid.concat(playerlistStruck, playerlistScored)}</ul>
