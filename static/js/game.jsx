@@ -161,6 +161,7 @@ class ControlPanel extends React.Component {
                 Command format:<br />
                 CREATE GID HEIGHT WIDTH MINLETTERS INCLUDEDOUBLE LANGUAGE<br />
                 JOIN GID<br />
+                NEWROUND<br />
                 SOLVE<br />
                 END<br />
                 e.g., CREATE game5293 5 5 4 Yes English
@@ -347,6 +348,11 @@ class App extends React.Component {
             this.state.socket.emit('game_join', {
                 gid: gid,
                 old_gid: this.state.gid
+            });
+        }
+        else if (tokens[0].toLowerCase() === "newround") {
+            this.state.socket.emit('board_gen', {
+                gid: this.state.gid
             });
         }
         else if (tokens[0].toLowerCase() === "solve") {
