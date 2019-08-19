@@ -170,10 +170,23 @@ class ControlPanel extends React.Component {
     }
 }
 
+class ModalStore extends React.Component {
+
+    handleClick() {
+        this.props.onClick(this.props.content);
+    }
+
+    render() {
+        return (
+            <button type="button" onClick={() => this.handleClick()}>{this.props.type}</button>
+        );
+    }
+}
+
 
 class Modal extends React.Component {
 
-    render () {
+    render() {
         if (this.props.content === null) {
             return null;
         }
@@ -194,15 +207,15 @@ class Modal extends React.Component {
                 if (results.hasOwnProperty(player)) {
 
                     let playerlistInvalid = results[player].invalid.map((word, index) => {
-                        return (<li key={"invalid" + index.toString()}><s>{word} ???</s></li>);
+                        return (<li key={"in" + index.toString()}><s>{word} ???</s></li>);
                     });
 
                     let playerlistStruck = results[player].struck.map((word, index) => {
-                        return (<li key={"struck" + index.toString()}><s>{word}</s></li>);
+                        return (<li key={"st" + index.toString()}><s>{word}</s></li>);
                     });
 
                     let playerlistScored = results[player].scored.map((word, index) => {
-                        return (<li key={"scored" + index.toString()}><div className="wordscore">{results[player].scores[index]}</div> {word}</li>);
+                        return (<li key={"sc" + index.toString()}><div className="wordscore">{results[player].scores[index]}</div> {word}</li>);
                     });
 
                     playerResults.push(
@@ -244,7 +257,9 @@ class App extends React.Component {
             messages: [],
             socket: null,
 
-            modalMessage: null
+            modalMessage: null,
+            lastScoreboard: null,
+            lastSolvedList: null
         };
     }
 
@@ -254,8 +269,14 @@ class App extends React.Component {
         this.state.socket.on("game_creation_response", msg => this.handleGameCreationResponse(JSON.parse(msg)));
         this.state.socket.on("game_join_response", msg => this.handleGameJoinResponse(JSON.parse(msg)));      
         this.state.socket.on("new_board", msg => this.updateBoard(JSON.parse(msg)));
-        this.state.socket.on("game_result", (result) => this.showModal(result));
-        this.state.socket.on("game_solution", (list) => this.showModal(list));
+        this.state.socket.on("game_result", (result) => {
+            this.setState({ lastScoreboard: result });
+            this.showModal(result);
+        });
+        this.state.socket.on("game_solution", (list) => {
+            this.setState({ lastSolvedList: list });
+            this.showModal(list);
+        });
         this.state.socket.on("incoming_message", resp => { 
             this.log(resp.username, resp.message); 
             $('.messages').scrollTop($('.messages')[0].scrollHeight + 300);
@@ -310,7 +331,16 @@ class App extends React.Component {
     }
 
     updateBoard(resp) {
-        this.setState({ gid: resp.gid, height: resp.height, width: resp.width, letters: resp.grid, words: []});
+        this.setState({ 
+            gid: resp.gid, 
+            height: resp.height, 
+            width: resp.width, 
+            letters: resp.grid, 
+            words: [], 
+            modalMessage: null,
+            lastScoreboard: null,
+            lastSolvedList: null
+        });
     }
 
     addWord(w) {
@@ -400,6 +430,8 @@ class App extends React.Component {
                     onEnterCommand={(cmd) => this.sendCommand(cmd)}
                     onEnterMessage={(msg) => this.sendMessage(msg)}
                 />
+                <ModalStore type="Scoreboard" onClick={(c) => this.showModal(c)} content={this.state.lastScoreboard} />
+                <ModalStore type="Solved List" onClick={(c) => this.showModal(c)} content={this.state.lastSolvedList} />
                 <Modal content={this.state.modalMessage} onModalClicked={() => this.setState({ modalMessage: null })} />
             </div>
         )
