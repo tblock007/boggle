@@ -164,7 +164,8 @@ class ControlPanel extends React.Component {
                 NEWROUND<br />
                 SOLVE<br />
                 END<br />
-                e.g., CREATE game5293 5 5 4 Yes English
+                e.g., CREATE game5293 5 5 4 Yes English<br />
+                Note that INCLUDEDOUBLE only has an effect in a 5x5 game.
             </div>
         );
     }

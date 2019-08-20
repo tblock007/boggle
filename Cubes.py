@@ -1,8 +1,31 @@
 import random
 
 NFACES = 6
+START4X4 = 0
+END4X4 = 15
+START5X5 = 16
+END5X5 = 40
+BONUS5X5 = 41
+START6X6 = 41
+END6X6 = 76
 
-cubes = [['A', 'A', 'E', 'E', 'E', 'E'], # BEGIN 25 normal cubes of 5x5
+cubes = [['A', 'A', 'E', 'E', 'N', 'G'], # [0] BEGIN 16 normal cubes of 4x4
+        ['D', 'E', 'L', 'R', 'V', 'Y'],
+        ['E', 'L', 'R', 'T', 'T', 'Y'],
+        ['D', 'E', 'I', 'L', 'R', 'X'],
+        ['E', 'I', 'O', 'S', 'S', 'T'],
+        ['E', 'E', 'G', 'H', 'N', 'W'],
+        ['H', 'I', 'M', 'N', 'Qu', 'U'],
+        ['H', 'L', 'N', 'N', 'R', 'Z'],
+        ['E', 'E', 'I', 'N', 'S', 'U'],
+        ['D', 'I', 'S', 'T', 'T', 'Y'],
+        ['A', 'O', 'O', 'T', 'T', 'W'],
+        ['A', 'C', 'H', 'O', 'P', 'S'],
+        ['C', 'I', 'M', 'O', 'T', 'U'],
+        ['A', 'B', 'B', 'J', 'O', 'O'],
+        ['E', 'H', 'R', 'T', 'V', 'W'],
+        ['A', 'F', 'F', 'K', 'P', 'S'], # [15] END 16 normal cubes of 4x4
+        ['A', 'A', 'E', 'E', 'E', 'E'], # [16] BEGIN 25 normal cubes of 5x5
         ['E', 'M', 'O', 'T', 'T', 'T'], 
         ['I', 'K', 'L', 'Qu', 'U', 'W'], 
         ['C', 'E', 'I', 'L', 'P', 'T'], 
@@ -26,8 +49,8 @@ cubes = [['A', 'A', 'E', 'E', 'E', 'E'], # BEGIN 25 normal cubes of 5x5
         ['A', 'A', 'F', 'I', 'R', 'S'],
         ['A', 'E', 'G', 'M', 'N', 'N'],
         ['D', 'H', 'L', 'N', 'O', 'R'],
-        ['E', 'N', 'S', 'S', 'S', 'U'], # END 25 normal cubes of 5x5
-        ['An', 'Er', 'He', 'In', 'Qu', 'Th'], # Bonus cube for 5x5, BEGIN 36 normal cubes of 6x6
+        ['E', 'N', 'S', 'S', 'S', 'U'], # [40] END 25 normal cubes of 5x5
+        ['An', 'Er', 'He', 'In', 'Qu', 'Th'], # [41] Bonus cube for 5x5, BEGIN 36 normal cubes of 6x6
         ['C', 'E', 'I', 'I', 'T', 'T'],
         ['I', 'P', 'R', 'S', 'Y', 'Y'],
         ['A', 'E', 'G', 'M', 'N', 'N'],
@@ -62,16 +85,18 @@ cubes = [['A', 'A', 'E', 'E', 'E', 'E'], # BEGIN 25 normal cubes of 5x5
         ['A', 'E', 'E', 'E', 'E', 'M'],
         ['A', 'A', 'F', 'I', 'R', 'S'],
         ['E', 'N', 'S', 'S', 'S', 'U'],
-        ['E', 'M', 'O', 'T', 'T', 'T']] # END 36 normal cubes of 6x6
+        ['E', 'M', 'O', 'T', 'T', 'T']] # END [76] 36 normal cubes of 6x6
 
 
 def getGrid(width, height, includeDoubleLetter):
-    if width == 5 and height == 5:
-        order = list(range(25))
+    if width == 4 and height == 4:
+        order = list(range(START4X4, END4X4 + 1))
+    elif width == 5 and height == 5:
+        order = list(range(START5X5, END5X5 + 1))
         if includeDoubleLetter:
-            order += [25]
+            order += [BONUS5X5]
     elif width == 6 and height == 6:
-        order = list(range(25, 61))
+        order = list(range(START6X6, END6X6 + 1))
     else:
         order = list(range(len(cubes)))   
     
