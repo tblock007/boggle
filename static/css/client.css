@@ -1,16 +1,22 @@
 .game {
     margin: 20px;
-    border: 2px solid blue;
+    padding: 10px;
+    border: 3px solid black;
+    background-color: rgba(255, 255, 255, 0.7);
 }
 
 .control {
     margin: 20px;
-    border: 2px solid blue;
+    padding: 10px;
+    border: 3px solid black;
+    background-color: rgba(255, 255, 255, 0.7);
 }
 
 .chat {
     margin: 20px;
-    border: 2px solid blue;
+    padding: 10px;
+    border: 3px solid black;
+    background-color: rgba(255, 255, 255, 0.7);
 }
 
 .messages {
@@ -22,6 +28,9 @@
 
 body {
     font: 16px "Century Gothic", Futura, sans-serif;
+    background-image: url('../assets/bg.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
   }
   
   ol, ul {
@@ -37,14 +46,15 @@ body {
   .square {
     background: #fff;
     color: #0000AA;
-    border: 1px solid #999;
+    border: 2px solid #999;
+    border-radius: 8px;
     float: left;
     font-size: 48px;
     font-weight: bold;
     line-height: 34px;
     height: 100px;
-    margin-right: -1px;
-    margin-top: -1px;
+    margin-right: 2px;
+    margin-top: 2px;
     padding: 0;
     text-align: center;
     width: 100px;
