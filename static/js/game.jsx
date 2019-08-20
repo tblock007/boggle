@@ -149,23 +149,28 @@ class ControlPanel extends React.Component {
                 <div className="control">
                     {status}
                     <input type="text" value={this.state.username} onChange={(e) => this.updateUsername(e)} placeholder="Enter username" style={{ width: "99.5%" }} />
-                    <input type="text" value={this.state.command} onKeyDown={(e) => this.handleKeyDownCommand(e)} onChange={(e) => this.updateCommand(e)} placeholder="Enter command here" style={{ width: "99.5%" }} />
-                  
+                    <div className="tooltip">
+                        <div className="tooltiptext">
+                            Command format:<br />
+                            <ul>
+                                <li>CREATE GID HEIGHT WIDTH MINLETTERS INCLUDEDOUBLE LANGUAGE</li>
+                                <li>JOIN GID</li>
+                                <li>NEWROUND</li>
+                                <li>SOLVE</li>
+                                <li>END</li>
+                            </ul>
+                            e.g., CREATE game5293 5 5 4 Yes English<br />
+                            Note that INCLUDEDOUBLE only has an effect in a 5x5 game.
+                        </div>
+                        <input type="text" value={this.state.command} onKeyDown={(e) => this.handleKeyDownCommand(e)} onChange={(e) => this.updateCommand(e)} placeholder="Enter command here" style={{ width: "99.5%" }} />                     
+                    </div>                  
                 </div>
                 <div className="chat">
                     <input type="text" value={this.state.message} onKeyDown={(e) => this.handleKeyDownMessage(e)} onChange={(e) => this.updateMessage(e)} placeholder="Enter chat message here" style={{ width: "99.5%" }} />
                     <div className="messages">
                         {messages}
                     </div>
-                </div>
-                Command format:<br />
-                CREATE GID HEIGHT WIDTH MINLETTERS INCLUDEDOUBLE LANGUAGE<br />
-                JOIN GID<br />
-                NEWROUND<br />
-                SOLVE<br />
-                END<br />
-                e.g., CREATE game5293 5 5 4 Yes English<br />
-                Note that INCLUDEDOUBLE only has an effect in a 5x5 game.
+                </div>                
             </div>
         );
     }
