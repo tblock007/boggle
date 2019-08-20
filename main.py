@@ -11,11 +11,11 @@ socketio = SocketIO(app)
 
 @app.route("/")
 def render_client():
-    return render_template("home.html")
-
-@app.route("/game")
-def render_game():
     return render_template("game.html")
+
+@app.route("/old")
+def render_game():
+    return render_template("home.html")
 
 
 @socketio.on('connect')
