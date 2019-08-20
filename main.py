@@ -139,11 +139,11 @@ if __name__ == "__main__":
 
     print('Starting Boggle server!')
     print('Loading dictionaries...')
-    englishDictionary = PrefixTrie("dictionaries/english.txt")
-    frenchDictionary = PrefixTrie("dictionaries/french.txt")
+    englishDictionary = PrefixTrie("dictionaries/csw_en.txt")
+    frenchDictionary = PrefixTrie("dictionaries/ods5_fr.txt")
     print('Dictionaries loaded!')
 
     games = dict()
 
-    socketio.run(app, debug=True)
-    #socketio.run(app, host='0.0.0.0', debug=False)
+    #socketio.run(app, debug=True)
+    socketio.run(app, host='0.0.0.0', debug=False)

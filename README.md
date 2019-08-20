@@ -7,5 +7,5 @@ Sample client is included, but is extremely unrefined at the moment.
 # Word Lists
 
 Word lists included in dictionaries/ originally obtained from:
-* English: https://github.com/dwyl/english-words
-* French: https://github.com/words/an-array-of-french-words
+* English: Collins Scrabble Words 2019
+* French: L'Officiel du jeu Scrabble (ODS5)
