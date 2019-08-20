@@ -196,9 +196,11 @@ class Modal extends React.Component {
         if (this.props.content.hasOwnProperty("wordlist")) {
             const wl = this.props.content.wordlist;
             const listcontent = wl.map((word, index) => {
-                return (<li key={index}>{word}</li>);
+                return (<li key={index}>{word.toUpperCase()}</li>);
             });
-            content = (<ul>{listcontent}</ul>);
+            content = (<div>Board solution:
+                <ul>{listcontent}</ul>
+                </div>);
         }
         else if (this.props.content.hasOwnProperty("results")) {
             const results = this.props.content.results;
