@@ -40,8 +40,14 @@ class WordInput extends React.Component {
 
 function Square(props) {
 
+    const sizeStyle = {
+        height: props.pixelHeight + "px",
+        width: props.pixelHeight + "px",
+        fontSize: Math.floor(props.pixelHeight/2) + "px"
+    };
+
     return (
-        <button className="square">
+        <button className="square" style={sizeStyle}>
             {props.letter}
         </button>
     );
@@ -50,13 +56,15 @@ function Square(props) {
 
 function Board(props) {
 
+    let pixelHeight = Math.floor(500 / props.height) - 4;
+
     const rows = []
     for (let i = 0; i < props.height; i++) {
         const squares = []
         for (let j = 0; j < props.width; j++) {
             index = i * props.width + j;
             let l = props.letters[index];
-            squares.push(<Square letter={l} key={index} />)
+            squares.push(<Square letter={l} key={index} pixelHeight={pixelHeight} />)
         }
         rows.push(<div className="board-row" key={i}>{squares}</div>)
     }
