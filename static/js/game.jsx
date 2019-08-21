@@ -27,7 +27,7 @@ class WordInput extends React.Component {
         });
 
         return (
-            <div>
+            <div className="word-input">
                 <input type="text" value={this.state.word} onKeyDown={(e) => this.handleKeyDown(e)} onChange={(e) => this.updateValue(e)} placeholder="Enter found words" />
                 <div id="wordlist">
                     <ul>{list}</ul>
@@ -61,7 +61,7 @@ function Board(props) {
         rows.push(<div className="board-row" key={i}>{squares}</div>)
     }
 
-    return (<div>{rows}</div>)
+    return (<div className="game-board">{rows}</div>)
 }
 
 
@@ -76,16 +76,12 @@ class Game extends React.Component {
 
         return (
             <div className="game">
-                <div className="game-board">
-                    <Board
+                <Board
                         height={height}
                         width={width}
                         letters={letters}
-                    />
-                </div>
-                <div className="word-input">
-                    <WordInput words={words} onEnter={(w) => this.props.addWord(w)} onDel={() => this.props.removeWord()} />
-                </div>
+                />
+                <WordInput words={words} onEnter={(w) => this.props.addWord(w)} onDel={() => this.props.removeWord()} />
             </div>
 
         );
@@ -145,7 +141,7 @@ class ControlPanel extends React.Component {
                     );
         })
         return (
-            <div>
+            <div style={{display: "contents"}}>
                 <div className="control">
                     {status}
                     <input type="text" value={this.state.username} onChange={(e) => this.updateUsername(e)} placeholder="Enter username" style={{ width: "99.5%" }} />
@@ -258,9 +254,9 @@ class App extends React.Component {
         this.state = {
             username: null,
             gid: null,
-            height: null,
-            width: null,
-            letters: [],
+            height: 5,
+            width: 5,
+            letters: [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
             words: [],
             messages: [],
             socket: null,
