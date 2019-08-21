@@ -121,6 +121,11 @@ body {
   cursor: pointer;
 }
 
+.modal-store-button:disabled {
+  background-color: #444;
+  color: #aaa;
+}
+
 
 /*************************/
 /* CHAT ELEMENTS         */
