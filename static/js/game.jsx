@@ -56,7 +56,7 @@ function Square(props) {
 
 function Board(props) {
 
-    let pixelHeight = Math.floor(485 / props.height) - 2;
+    let pixelHeight = Math.floor(480 / props.height) - 2;
 
     const rows = []
     for (let i = 0; i < props.height; i++) {
@@ -151,7 +151,11 @@ class ControlPanel extends React.Component {
         return (
             <div style={{display: "contents"}}>
                 <div className="control">
-                    {status}
+                    <div>
+                        {status}
+                        <ModalStore type="SCOREBOARD" onClick={(c) => this.props.onModalStoreClicked(c)} content={this.props.lastScoreboard} />
+                        <ModalStore type="SOLVED LIST" onClick={(c) => this.props.onModalStoreClicked(c)} content={this.props.lastSolvedList} />
+                    </div>
                     <input type="text" value={this.state.username} onChange={(e) => this.updateUsername(e)} placeholder="Enter username" style={{ width: "99.5%" }} />
                     <div className="tooltip">
                         <div className="tooltiptext">
@@ -188,7 +192,7 @@ class ModalStore extends React.Component {
 
     render() {
         return (            
-            <button type="button" disabled={this.props.content === null} onClick={() => this.handleClick()}>{this.props.type}</button>
+            <button type="button" className="modal-store-button" disabled={this.props.content === null} onClick={() => this.handleClick()}>{this.props.type}</button>
         );
     }
 }
@@ -442,9 +446,10 @@ class App extends React.Component {
                     onEnterUsername={(usr) => this.setState({ username: usr })}
                     onEnterCommand={(cmd) => this.sendCommand(cmd)}
                     onEnterMessage={(msg) => this.sendMessage(msg)}
+                    onModalStoreClicked = {(c) => this.showModal(c)}
+                    lastScoreboard = {this.state.lastScoreboard}
+                    lastSolvedList = {this.state.lastSolvedList}
                 />
-                <ModalStore type="Scoreboard" onClick={(c) => this.showModal(c)} content={this.state.lastScoreboard} />
-                <ModalStore type="Solved List" onClick={(c) => this.showModal(c)} content={this.state.lastSolvedList} />
                 <Modal content={this.state.modalMessage} onModalClicked={() => this.setState({ modalMessage: null })} />
             </div>
         )

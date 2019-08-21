@@ -35,7 +35,7 @@ body {
 }
 
 .game {
-  height: 505px;
+  height: 500px;
   margin: 20px;
   padding: 10px;
   border: 3px solid black;
@@ -43,7 +43,7 @@ body {
 }
 
 .control {
-  height: 85px;
+  height: 95px;
   margin: 20px;
   padding: 10px;
   border: 3px solid black;
@@ -51,7 +51,7 @@ body {
 }
 
 .chat {
-  height: 220px;
+  height: 215px;
   margin: 20px;
   padding: 10px;
   border: 3px solid black;
@@ -105,6 +105,22 @@ body {
   margin-top: 10px;
   overflow-y: auto;
 }
+
+
+/*************************/
+/* CPANEL ELEMENTS       */
+/*************************/
+
+.modal-store-button {
+  margin: 0px 0px 5px 20px;
+  padding: 4px 16px;
+  background-color: #0000AA;
+  color: white;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+}
+
 
 /*************************/
 /* CHAT ELEMENTS         */
