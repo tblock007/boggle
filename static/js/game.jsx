@@ -56,7 +56,7 @@ function Square(props) {
 
 function Board(props) {
 
-    let pixelHeight = Math.floor(500 / props.height) - 4;
+    let pixelHeight = Math.floor(485 / props.height) - 2;
 
     const rows = []
     for (let i = 0; i < props.height; i++) {
