@@ -434,6 +434,21 @@ class App extends React.Component {
         this.setState({ modalMessage: content });
     }
 
+    rotateBoard() {
+        const width = this.state.width;
+        const height = this.state.height;
+        const oldLetters = this.state.letters;
+
+        let newLetters = [];
+        for (let col = width - 1; col >= 0; col--) {
+            for (let row = 0; row < height; row++) {
+                let i = (row * width) + col
+                newLetters.push(oldLetters[i]);
+            }
+        }
+        this.setState({ height: width, width: height, letters: newLetters });
+    }
+
     render() {
         return (
             <div>
