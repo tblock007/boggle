@@ -28,7 +28,12 @@ class WordInput extends React.Component {
 
         return (
             <div className="word-input">
-                <input type="text" value={this.state.word} onKeyDown={(e) => this.handleKeyDown(e)} onChange={(e) => this.updateValue(e)} placeholder="Enter found words" />
+                <div className="tooltip">
+                    <div className="tooltiptext">
+                        Type words found and press Enter to add them to your list.  Press DEL at any time to delete the most recent entry from your list.
+                    </div>
+                    <input type="text" value={this.state.word} onKeyDown={(e) => this.handleKeyDown(e)} onChange={(e) => this.updateValue(e)} placeholder="Enter found words" />
+                </div> 
                 <div id="wordlist">
                     <ul>{list}</ul>
                 </div>
