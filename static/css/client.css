@@ -111,7 +111,7 @@ body {
 /* CPANEL ELEMENTS       */
 /*************************/
 
-.modal-store-button {
+.other-button, .modal-store-button {
   margin: 0px 0px 5px 20px;
   padding: 4px 16px;
   background-color: #0000AA;
@@ -121,7 +121,7 @@ body {
   cursor: pointer;
 }
 
-.modal-store-button:disabled {
+.other-button:disabled, .modal-store-button:disabled {
   background-color: #444;
   color: #aaa;
 }

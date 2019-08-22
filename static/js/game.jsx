@@ -160,6 +160,7 @@ class ControlPanel extends React.Component {
                         {status}
                         <ModalStore type="SCOREBOARD" onClick={(c) => this.props.onModalStoreClicked(c)} content={this.props.lastScoreboard} />
                         <ModalStore type="SOLVED LIST" onClick={(c) => this.props.onModalStoreClicked(c)} content={this.props.lastSolvedList} />
+                        <button className="other-button" onClick={() => this.props.onRotateClicked()}>ROTATE BOARD</button>
                     </div>
                     <input type="text" value={this.state.username} onChange={(e) => this.updateUsername(e)} placeholder="Enter username" style={{ width: "99.5%" }} />
                     <div className="tooltip">
@@ -467,6 +468,7 @@ class App extends React.Component {
                     onEnterCommand={(cmd) => this.sendCommand(cmd)}
                     onEnterMessage={(msg) => this.sendMessage(msg)}
                     onModalStoreClicked = {(c) => this.showModal(c)}
+                    onRotateClicked = {() => this.rotateBoard()}
                     lastScoreboard = {this.state.lastScoreboard}
                     lastSolvedList = {this.state.lastSolvedList}
                 />
