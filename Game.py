@@ -8,7 +8,7 @@ from collections import Counter
 
 class Game:
 
-    def __init__(self, gid, height, width, minimumLetters, minutes, includeDoubleLetterCube, validWords):
+    def __init__(self, gid, height, width, minimumLetters, minutes, includeDoubleLetterCube, language, validWords):
         self.gid = gid
         self.width = width
         self.height = height
@@ -18,12 +18,13 @@ class Game:
         self.minimumLetters = minimumLetters
         self.minutes = minutes
         self.includeDoubleLetterCube = includeDoubleLetterCube
+        self.language = language
         self.checker = WordChecker(validWords)
         self.newRound()
 
 
     def __str__(self):
-        return '"gid": "{0}", "width": {1}, "height": {2}, "grid": [{3}], "minimumLetters": {4}, "minutes": {5}'.format(self.gid, self.width, self.height, ','.join('"{0}"'.format(l) for l in self.grid), self.minimumLetters, self.minutes)
+        return '"gid": "{0}", "width": {1}, "height": {2}, "grid": [{3}], "minimumLetters": {4}, "minutes": {5}, "language": "{6}"'.format(self.gid, self.width, self.height, ','.join('"{0}"'.format(l) for l in self.grid), self.minimumLetters, self.minutes, self.language)
 
 
     def newRound(self):
