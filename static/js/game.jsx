@@ -275,6 +275,8 @@ class App extends React.Component {
             height: 5,
             width: 5,
             letters: [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+            minimumLetters: null,
+            minutes: null,
             words: [],
             messages: [],
             socket: null,
@@ -359,6 +361,8 @@ class App extends React.Component {
             height: resp.height, 
             width: resp.width, 
             letters: resp.grid, 
+            minimumLetters: resp.minimumLetters,
+            minutes: resp.minutes,
             words: [], 
             modalMessage: null,
             lastScoreboard: null,
@@ -382,8 +386,9 @@ class App extends React.Component {
             const height = parseInt(tokens[2], 10);
             const width = parseInt(tokens[3], 10);
             const minLetters = parseInt(tokens[4], 10);
-            const includeDoubleLetterCube = (tokens[5].toLowerCase() === "yes");
-            const language = tokens[6];
+            const minutes = parseInt(tokens[5], 10);
+            const includeDoubleLetterCube = (tokens[6].toLowerCase() === "yes");
+            const language = tokens[7];
 
             this.state.socket.emit('game_creation', {
                 gid: gid,
@@ -391,6 +396,7 @@ class App extends React.Component {
                 height: height,
                 width: width,
                 minimumLetters: minLetters,
+                minutes: minutes,
                 includeDoubleLetterCube: includeDoubleLetterCube,
                 language: language
             });

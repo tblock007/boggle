@@ -39,6 +39,7 @@ def handle_game_creation_event(json, methods = ['GET', 'POST']):
     height = json['height']
     width = json['width']
     minLetters = json['minimumLetters']
+    minutes = json['minutes']
     includeDoubleLetterCube = json['includeDoubleLetterCube']
     language = json['language']
 
@@ -56,7 +57,7 @@ def handle_game_creation_event(json, methods = ['GET', 'POST']):
         if games[ogid].numPlayers() == 0:
             del games[ogid]
 
-    games[gid] = Game(gid, height, width, minLetters, includeDoubleLetterCube, frenchDictionary if language.lower() == 'french' else englishDictionary)
+    games[gid] = Game(gid, height, width, minLetters, minutes, includeDoubleLetterCube, frenchDictionary if language.lower() == 'french' else englishDictionary)
     join_room(str(gid))
     games[gid].addPlayer(request.sid)
     emit('game_creation_response', '{{ "response": "OK", {0} }}'.format(str(games[gid])))
