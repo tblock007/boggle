@@ -171,7 +171,7 @@ class ControlPanel extends React.Component {
                                 <li>JOIN GID</li>
                                 <li>NEWROUND</li>
                                 <li>SOLVE</li>
-                                <li>END</li>
+                                <li>ENDROUND</li>
                             </ul>
                             e.g., CREATE game5293 5 5 4 4 Yes English<br />
                             Note that INCLUDEDOUBLE only has an effect in a 5x5 game.
@@ -294,7 +294,16 @@ class App extends React.Component {
         this.state.socket.on("user_join_response", () => this.log("Server", "Welcome to the Boggle server! Please ensure you set your username."));
         this.state.socket.on("game_creation_response", msg => this.handleGameCreationResponse(JSON.parse(msg)));
         this.state.socket.on("game_join_response", msg => this.handleGameJoinResponse(JSON.parse(msg)));      
-        this.state.socket.on("new_board", msg => this.updateBoard(JSON.parse(msg)));
+        this.state.socket.on("new_board", (msg) => {            
+            this.updateBoard(JSON.parse(msg));
+            setTimeout(() => { 
+                this.state.socket.emit("list_submit", {
+                    username: this.state.username,
+                    gid: this.state.gid,
+                    list: this.state.words
+                });
+            }, this.state.minutes * 60 * 1000);
+        });
         this.state.socket.on("game_result", (result) => {
             this.setState({ lastScoreboard: result });
             this.showModal(result);
@@ -421,7 +430,7 @@ class App extends React.Component {
                 gid: this.state.gid
             });
         }
-        else if (tokens[0].toLowerCase() === "end") {
+        else if (tokens[0].toLowerCase() === "endround") {
             this.state.socket.emit('end_game', {
                 gid: this.state.gid
             });
