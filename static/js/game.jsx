@@ -154,14 +154,9 @@ class ControlPanel extends React.Component {
                     );
         })
         return (
-            <div style={{display: "contents"}}>
-                <div className="control">
-                    <div>
-                        {status}
-                        <ModalStore type="SCOREBOARD" onClick={(c) => this.props.onModalStoreClicked(c)} content={this.props.lastScoreboard} />
-                        <ModalStore type="SOLVED LIST" onClick={(c) => this.props.onModalStoreClicked(c)} content={this.props.lastSolvedList} />
-                        <button className="other-button" onClick={() => this.props.onRotateClicked()}>ROTATE BOARD</button>
-                    </div>
+            <div className="control">
+                <div className="panel">
+                    <div>{status}</div>
                     <input type="text" value={this.state.username} onChange={(e) => this.updateUsername(e)} placeholder="Enter username" style={{ width: "99.5%" }} />
                     <div className="tooltip">
                         <div className="tooltiptext">
@@ -177,7 +172,11 @@ class ControlPanel extends React.Component {
                             Note that INCLUDEDOUBLE only has an effect in a 5x5 game.
                         </div>
                         <input type="text" value={this.state.command} onKeyDown={(e) => this.handleKeyDownCommand(e)} onChange={(e) => this.updateCommand(e)} placeholder="Enter command here" style={{ width: "99.5%" }} />                     
-                    </div>                  
+                    </div> 
+                    <button className="other-button" onClick={() => this.props.onRotateClicked()}>ROTATE BOARD</button>
+                    <ModalStore type="VIEW SCOREBOARD" onClick={(c) => this.props.onModalStoreClicked(c)} content={this.props.lastScoreboard} />
+                    <ModalStore type="VIEW SOLUTION" onClick={(c) => this.props.onModalStoreClicked(c)} content={this.props.lastSolvedList} />
+                                     
                 </div>
                 <div className="chat">
                     <input type="text" value={this.state.message} onKeyDown={(e) => this.handleKeyDownMessage(e)} onChange={(e) => this.updateMessage(e)} placeholder="Enter chat message here" style={{ width: "99.5%" }} />
