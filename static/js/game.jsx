@@ -146,7 +146,15 @@ class ControlPanel extends React.Component {
     }
 
     render() {
-        const status = (this.props.gid === null) ? "Not connected to a game" : "Currently connected to game: " + this.props.gid;
+
+        const info = (<div className="status">
+            <div><b>Currently connected to game: {this.props.gid}</b></div>
+            <div><i>Language</i>: {(this.props.language) ? this.props.language.toUpperCase() : null}</div>
+            <div><i>Minimum Letters</i>: {this.props.minLetters}</div>
+        </div>);
+        
+        const status = (this.props.gid === null) ? (<div className="status"><b>Not connected to a game</b></div>) : info;
+
         const messages = this.props.messages.map((m, index) => {
             return (<div className="message" key={index}>
                         [{m.timestamp}] <b>{m.sender}</b>  : {m.content}
@@ -156,7 +164,7 @@ class ControlPanel extends React.Component {
         return (
             <div className="control">
                 <div className="panel">
-                    <div>{status}</div>
+                    {status}
                     <input type="text" value={this.state.username} onChange={(e) => this.updateUsername(e)} placeholder="Enter username" style={{ width: "99.5%" }} />
                     <div className="tooltip">
                         <div className="tooltiptext">
@@ -176,6 +184,7 @@ class ControlPanel extends React.Component {
                     <button className="other-button" onClick={() => this.props.onRotateClicked()}>ROTATE BOARD</button>
                     <ModalStore type="VIEW SCOREBOARD" onClick={(c) => this.props.onModalStoreClicked(c)} content={this.props.lastScoreboard} />
                     <ModalStore type="VIEW SOLUTION" onClick={(c) => this.props.onModalStoreClicked(c)} content={this.props.lastSolvedList} />
+                    <div className="timer">{this.props.roundTimeRemaining}</div>
                                      
                 </div>
                 <div className="chat">
@@ -281,6 +290,7 @@ class App extends React.Component {
             messages: [],
             socket: null,
 
+            roundEndTime: null,
             modalMessage: null,
             lastScoreboard: null,
             lastSolvedList: null
@@ -295,12 +305,14 @@ class App extends React.Component {
         this.state.socket.on("game_join_response", msg => this.handleGameJoinResponse(JSON.parse(msg)));      
         this.state.socket.on("new_board", (msg) => {            
             this.updateBoard(JSON.parse(msg));
+            this.setState({ roundEndTime: new Date((new Date().getTime()) + this.state.minutes * 60 * 1000) });
             setTimeout(() => { 
                 this.state.socket.emit("list_submit", {
                     username: this.state.username,
                     gid: this.state.gid,
                     list: this.state.words
                 });
+                this.setState({ roundEndTime: null });
             }, this.state.minutes * 60 * 1000);
         });
         this.state.socket.on("game_result", (result) => {
@@ -321,7 +333,10 @@ class App extends React.Component {
                 gid: this.state.gid,
                 list: this.state.words
             });
-        });        
+        });  
+        
+        
+        setInterval(() => {this.forceUpdate()}, 1000);
     }
 
     padzero(n) {
@@ -466,6 +481,18 @@ class App extends React.Component {
         this.setState({ height: width, width: height, letters: newLetters });
     }
 
+    timeRemaining() {
+        if (this.state.roundEndTime === null) {
+            return null;
+        }
+
+        const now = new Date().getTime();
+        const distance = this.state.roundEndTime - now;
+        const minutes = Math.floor(distance / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        return minutes.toString() + ":" + ((seconds <= 9) ? "0" : "") + seconds.toString();
+    }
+
     render() {
         return (
             <div>
@@ -479,7 +506,10 @@ class App extends React.Component {
                 />
                 <ControlPanel 
                     gid={this.state.gid}
+                    minLetters={this.state.minimumLetters}
+                    language={this.state.language}
                     messages={this.state.messages}
+                    roundTimeRemaining={this.timeRemaining()}
                     onEnterUsername={(usr) => this.setState({ username: usr })}
                     onEnterCommand={(cmd) => this.sendCommand(cmd)}
                     onEnterMessage={(msg) => this.sendMessage(msg)}

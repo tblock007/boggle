@@ -135,13 +135,26 @@ body {
   color: #aaa;
 }
 
+.status {
+  margin-bottom: 10px;
+}
+
+.timer {
+  width: 100%;
+  padding: 12px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 36px;
+  font-family: Courier New;
+}
+
 
 /*************************/
 /* CHAT ELEMENTS         */
 /*************************/
 
 .messages {
-  height: 180px;
+  height: 260px;
   margin-top: 10px;
   overflow-y: scroll;
 }  
