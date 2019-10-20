@@ -96,6 +96,7 @@ def handle_board_gen_event(json, methods = ['GET', 'POST']):
     if gid not in games.keys():
         emit('new_board', '{ "response": "DOESNOTEXIST" }')
     else:
+        games[gid].resetResults()
         games[gid].newRound()
         emit('new_board', '{{ {0} }}'.format(str(games[gid])), room = str(gid))
 
@@ -131,8 +132,6 @@ def handle_list_submit(json, methods = ['GET', 'POST']):
 @socketio.on('new_message')
 def handle_new_message(json, methods = ['GET', 'POST']):
     gid = json['gid']
-    
-    print('\n\n NEW MESSAGE {0}\n\n'.format(json['message']))
     emit('incoming_message', json, room = str(gid))
 
 
