@@ -1,6 +1,7 @@
 import random
 
 NFACES = 6
+
 START4X4 = 0
 END4X4 = 15
 START5X5 = 16
@@ -8,7 +9,6 @@ END5X5 = 40
 BONUS5X5 = 41
 START6X6 = 41
 END6X6 = 76
-
 cubes = [['A', 'A', 'E', 'E', 'N', 'G'], # [0] BEGIN 16 normal cubes of 4x4
         ['D', 'E', 'L', 'R', 'V', 'Y'],
         ['E', 'L', 'R', 'T', 'T', 'Y'],
@@ -88,7 +88,12 @@ cubes = [['A', 'A', 'E', 'E', 'N', 'G'], # [0] BEGIN 16 normal cubes of 4x4
         ['E', 'M', 'O', 'T', 'T', 'T']] # END [76] 36 normal cubes of 6x6
 
 
+# Generates a random grid of a given width and height.
+# 4x4, 5x5, and 6x6 have tailored cubesets. Other sizes
+# will draw from all available cubes.
 def getGrid(width, height, includeDoubleLetter):
+    if width * height > len(cubes):
+        raise Exception("Not enough cubes.") 
     if width == 4 and height == 4:
         order = list(range(START4X4, END4X4 + 1))
     elif width == 5 and height == 5:
@@ -101,5 +106,9 @@ def getGrid(width, height, includeDoubleLetter):
         order = list(range(len(cubes)))   
     
     random.shuffle(order)
-    return [cubes[order[i]][random.randrange(NFACES)] for i in range(width * height)]
+    result = [['.' for j in range(width)] for i in range(height)]
+    for i in range(height):
+        for j in range(width):
+            index = i * width + j
+            result[i][j] = cubes[order[index]][random.randrange(NFACES)]
         
