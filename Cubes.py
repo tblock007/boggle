@@ -111,4 +111,5 @@ def getGrid(width, height, includeDoubleLetter):
         for j in range(width):
             index = i * width + j
             result[i][j] = cubes[order[index]][random.randrange(NFACES)]
+    return result
         
