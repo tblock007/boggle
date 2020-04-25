@@ -27,9 +27,6 @@ class TrieNode:
                 return False
             return self.children[letter].is_valid(string[:-1])
 
-
-
-
 # A prefix trie class for storing valid words in a lexicon.
 # Letters are stored as edges between nodes, so that a word is 
 # described by a path from the root to some other node.

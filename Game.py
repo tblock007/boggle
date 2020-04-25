@@ -5,7 +5,7 @@ from transitions import Machine
 from typing import NamedTuple
 
 from PrefixTrie import PrefixTrie
-# from Analyzer import Analyzer
+from Analyzer import Analyzer
 
 class GameProperties(NamedTuple):    
     minimumLetters: int = 4
@@ -67,8 +67,8 @@ class Game:
         self.grid.reroll()
 
     def analyze_endgame(self):
-        # self.analyzer.set_grid(self.grid)
-        all_words = [] # self.get_all_words()
+        self.analyzer.set_grid(self.grid.letters)
+        all_words =self.get_all_words()
         response = {"scoreboard": {}, "solution": all_words}
         struck = self.get_common_words()
         for player, word_list in self.player_lists.items():

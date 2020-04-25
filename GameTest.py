@@ -1,12 +1,17 @@
 import unittest
+from Analyzer import Analyzer
 from Game import Game, GameProperties
 from Grid import Grid
+from PrefixTrie import PrefixTrie
 
 class GameTest(unittest.TestCase):
 
     def setUp(self):
         grid = Grid(5, 5, True)
-        self.game = Game('test', GameProperties(minimumLetters = 4, minutes = 4), grid, None)
+        valid_words = PrefixTrie("lexicons/prefix_trie_test.txt")
+        analyzer = Analyzer(valid_words, "English")
+        
+        self.game = Game('test', GameProperties(minimumLetters = 4, minutes = 4), grid, analyzer)
         self.game.add_player("T-block")
         self.game.add_player("O-block")
         self.game.add_player("I-block")
