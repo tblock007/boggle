@@ -3,7 +3,7 @@ from PrefixTrie import PrefixTrie
 
 class PrefixTrieTest(unittest.TestCase):
     def setUp(self):
-        self.lexicon = PrefixTrie("dictionaries/prefix_trie_test.txt")
+        self.lexicon = PrefixTrie("lexicons/prefix_trie_test.txt")
 
     def test_presence(self):
         self.assertTrue(self.lexicon.check("banana"))

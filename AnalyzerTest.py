@@ -4,7 +4,7 @@ from PrefixTrie import PrefixTrie
 
 class AnalyzerTest(unittest.TestCase):
     def setUp(self):
-        lexicon = PrefixTrie("dictionaries/csw_en.txt")
+        lexicon = PrefixTrie("lexicons/csw_en.txt")
         self.analyzer = Analyzer(lexicon, "English")
 
     def test_4x4_solve(self):
