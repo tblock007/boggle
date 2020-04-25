@@ -1,6 +1,7 @@
+import json
 import unittest
 from Analyzer import Analyzer
-from Game import Game, GameProperties
+from Game import Game, GameEncoder, GameProperties
 from Grid import Grid
 from PrefixTrie import PrefixTrie
 
@@ -11,7 +12,7 @@ class GameTest(unittest.TestCase):
         valid_words = PrefixTrie("lexicons/prefix_trie_test.txt")
         analyzer = Analyzer(valid_words, "English")
         
-        self.game = Game('test', GameProperties(minimumLetters = 4, minutes = 4), grid, analyzer)
+        self.game = Game('test', GameProperties(min_letters = 4, minutes = 4), grid, analyzer)
         self.game.add_player("T-block")
         self.game.add_player("O-block")
         self.game.add_player("I-block")
@@ -46,6 +47,14 @@ class GameTest(unittest.TestCase):
         self.game.start_round()
         self.game.remove_player("T-block") # Should occur even if ROUND_IN_PROGRESS
         self.assertEqual(len(self.game.players), 1)
+
+    def test_JSON_encode(self):
+        self.game.start_round()
+        encoded = json.dumps(self.game, cls = GameEncoder)
+        expected_prefix = r'{"id": "test", "state": "ROUND_IN_PROGRESS"'
+        expected_suffix = r'"min_letters": 4, "minutes": 4, "language": "English"}'
+        self.assertTrue(encoded.startswith(expected_prefix))
+        self.assertTrue(encoded.endswith(expected_suffix))
 
     # TODO: Add a "full game" test
     

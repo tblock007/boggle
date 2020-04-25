@@ -8,7 +8,7 @@ from PrefixTrie import PrefixTrie
 from Analyzer import Analyzer
 
 class GameProperties(NamedTuple):    
-    minimumLetters: int = 4
+    min_letters: int = 4
     minutes: int = 4
 
 class Game:
@@ -49,6 +49,9 @@ class Game:
             return True
         return False
 
+    def num_players(self):
+        return len(self.players)
+
     def add_player_list(self, username, word_list):
         if self.state == 'GATHERING_LISTS':
             if username in self.players:
@@ -56,11 +59,6 @@ class Game:
                 self.try_get_results()
                 return True
         return False
-
-    # TODO: Rework how the game grid is sent now that it is in 2D
-    # TODO: Make it so that __str__ isn't needed
-    def __str__(self):
-        return '"id": "{0}", "width": {1}, "height": {2}, "grid": [{3}], "minimumLetters": {4}, "minutes": {5}, "language": "{6}"'.format(self.id, self.grid.width, self.grid.height, ','.join(['"{0}"'.format(l) for r in self.grid.letters]), self.properties.minimumLetters, self.properties.minutes, self.analyzer.language)
 
     def reset_board(self):
         self.player_lists = dict()
@@ -72,7 +70,7 @@ class Game:
         response = {"scoreboard": {}, "solution": all_words}
         struck = self.get_common_words()
         for player, word_list in self.player_lists.items():
-            invalid = set(w for w in word_list if (len(w) < self.properties.minimumLetters or not self.analyzer.check(w)))
+            invalid = set(w for w in word_list if (len(w) < self.properties.min_letters or not self.analyzer.check(w)))
             remaining = set(word_list) - invalid
             scored = remaining - struck
             response["scoreboard"][player] = dict()            
@@ -93,7 +91,7 @@ class Game:
         return set(w for w, c in counts.items() if c > 1)
 
     def get_all_words(self):
-        all_words = [w for w in self.analyzer.find_all_words() if len(w) >= self.properties.minimumLetters]
+        all_words = [w for w in self.analyzer.find_all_words() if len(w) >= self.properties.min_letters]
         all_words.sort(key = (lambda x: (-1 * len(x), x)))
         return all_words
 
@@ -104,3 +102,17 @@ class Game:
         elif len(word) == 7: return 5
         elif len(word) == 8: return 11
         else: return (2 * len(word))
+
+class GameEncoder(json.JSONEncoder):
+    def default(self, game):
+        if isinstance(game, Game):
+            encoded = dict()
+            encoded["id"] = game.id
+            encoded["state"] = game.state
+            encoded["grid"] = game.grid.letters
+            encoded["min_letters"] = game.properties.min_letters
+            encoded["minutes"] = game.properties.minutes
+            encoded["language"] = game.analyzer.language
+
+            return encoded
+        return json.JSONEncoder.default(self, game)
