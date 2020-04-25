@@ -91,7 +91,7 @@ cubes = [['A', 'A', 'E', 'E', 'N', 'G'], # [0] BEGIN 16 normal cubes of 4x4
 # Generates a random grid of a given width and height.
 # 4x4, 5x5, and 6x6 have tailored cubesets. Other sizes
 # will draw from all available cubes.
-def getGrid(width, height, includeDoubleLetter):
+def get_grid(width, height, includeDoubleLetter):
     if width * height > len(cubes):
         raise Exception("Not enough cubes.") 
     if width == 4 and height == 4:

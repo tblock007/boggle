@@ -10,4 +10,4 @@ class Grid:
         self.letters = None
 
     def reroll(self):
-        self.letters = Cubes.getGrid(self.width, self.height, self.includeDoubleLetter)
+        self.letters = Cubes.get_grid(self.width, self.height, self.includeDoubleLetter)
