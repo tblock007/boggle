@@ -42,10 +42,10 @@ class PrefixTrie:
 
         # insert all words in the specified file
         # note that words are stored backwards in the PrefixTrie
-        f = open(wordListFile, 'r')
-        words = f.readlines()
-        for w in words:
-            self.root.insert(w.strip()[::-1])
+        with open(wordListFile, 'r') as f:
+            words = f.readlines()
+            for w in words:
+                self.root.insert(w.strip()[::-1])
         
 
 
