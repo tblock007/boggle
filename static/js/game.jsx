@@ -7,7 +7,6 @@ class Login extends React.Component {
     render() {        
         return (
             <div className="login">
-                Enter username: 
                 <input 
                     type="text" value={this.state.username} 
                     onChange={(e) => this.setState({ username: e.target.value })} 
@@ -204,8 +203,9 @@ class App extends React.Component {
 
     componentDidMount() {
         this.state.socket = io.connect("http://" + document.domain + ":" + location.port);
-        this.state.socket.on("game_state_update", (game) => {
-            this.updateGameState(game);
+        this.state.socket.on("game_state_update", (resp) => {
+            this.updateGameState(resp.game);
+            this.log("Server", resp.message);
         });
         this.state.socket.on("list_request", () => { 
             this.state.socket.emit("list_submit", {
@@ -219,16 +219,16 @@ class App extends React.Component {
             $('.messages').scrollTop($('.messages')[0].scrollHeight + 300);
         });
         this.state.socket.on("game_dne_error", () => {
-            // TODO: action on game does-not-exist
+            alert('Game ' + this.state.gid + ' no longer exists!');
         });
         this.state.socket.on("wrong_game_error", () => {
-            // TODO: action on sending to wrong game
+            alert('You are not authorized to participate in game ' + this.state.gid + '. Please log out and try re-joining.');
         });
         this.state.socket.on("join_failed_error", () => {
-            // TODO: action on join fail
+            alert('Could not join game ' + this.state.gid + '. Either a round is in progress, or there could be a username conflict.');
         });
         this.state.socket.on("list_submit_failed_error", () => {
-            // TODO: action on list submit fail
+            alert('Could not submit word list to game ' + this.state.gid);
         });        
         
         setInterval(() => {this.forceUpdate()}, 1000);

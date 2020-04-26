@@ -36,7 +36,7 @@ def handle_game_join_event(json, methods = ["GET", "POST"]):
     if games[json["gid"]].add_player(json["username"]):        
         join_room(json["gid"])
         print("Emitting {0}".format(games[json["gid"]].encode()))
-        emit("game_state_update", games[json["gid"]].encode())
+        emit("game_state_update", {"message": "{0} has joined the room!".format(json["username"]), "game": games[json["gid"]].encode()}, room = str(json["gid"]))
     else:
         emit("join_failed_error")
 
