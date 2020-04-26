@@ -97,6 +97,17 @@ class Game:
         all_words.sort(key = (lambda x: (-1 * len(x), x)))
         return all_words
 
+    def encode(self):
+        encoded = dict()
+        encoded["gid"] = self.gid
+        encoded["state"] = self.state
+        encoded["grid"] = self.grid.letters
+        encoded["min_letters"] = self.properties.min_letters
+        encoded["minutes"] = self.properties.minutes
+        encoded["language"] = self.analyzer.language
+        encoded["player_scores"] = self.player_scores
+        return encoded
+
     def score(word):
         if len(word) <= 4: return 1
         elif len(word) == 5: return 2
@@ -108,13 +119,5 @@ class Game:
 class GameEncoder(json.JSONEncoder):
     def default(self, game):
         if isinstance(game, Game):
-            encoded = dict()
-            encoded["gid"] = game.gid
-            encoded["state"] = game.state
-            encoded["grid"] = game.grid.letters
-            encoded["min_letters"] = game.properties.min_letters
-            encoded["minutes"] = game.properties.minutes
-            encoded["language"] = game.analyzer.language
-            encoded["player_scores"] = game.player_scores
-            return encoded
+            return game.encode()
         return json.JSONEncoder.default(self, game)

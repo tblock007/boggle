@@ -21,35 +21,51 @@ def create_game(gid, height, width, min_letters, minutes, language):
     games[gid] = Game(gid, GameProperties(min_letters = min_letters, minutes = minutes), grid, analyzer)
     return "Successfully created game {gid} with size {height}x{width}, letter minimum {min_letters}, time limit {minutes} minutes, and language {language}".format(gid = games[gid].gid, height = games[gid].grid.height, width = games[gid].grid.width, min_letters = games[gid].properties.min_letters, minutes = games[gid].properties.minutes, language = games[gid].analyzer.language)
 
-@app.route("/join/<gid>")
+@app.route("/game/<gid>")
 def join_game(gid):
     if gid not in games.keys():
         return "Game {0} not found!".format(gid)
-    return "Joined {0}!".format(gid)
+    return render_template("game.html", gid = gid)
 
 @socketio.on("game_join")
-def handle_join_game_event(json, methods = ["GET", "POST"]):
-    gid = json["id"]
-    username = json["username"]
-    if gid not in games.keys():
-        emit("game_join_response", '{ "response": "DOES_NOT_EXIST" }')
+def handle_game_join_event(json, methods = ["GET", "POST"]):
+    print("Handling game join event from {0} in game {1}. {2}".format(json["username"], json["gid"], json))
+    if json["gid"] not in games.keys():
+        emit("game_dne_error")
         return
-    join_room(gid)
-    games[gid].add_player(username)
+    if games[json["gid"]].add_player(json["username"]):        
+        join_room(json["gid"])
+        print("Emitting {0}".format(games[json["gid"]].encode()))
+        emit("game_state_update", games[json["gid"]].encode())
+    else:
+        emit("join_failed_error")
 
 @socketio.on("game_start")
 def handle_game_start_event(json, methods = ["GET", "POST"]):
-    gid = json["gid"]
-    username = json["username"]
-    if gid not in games.keys():
-        emit("game_start_response", '{ "response": "DOES_NOT_EXIST" }')
+    if json["gid"] not in games.keys():
+        emit("game_dne_error")
         return
-    if not games[gid].has_player(username):
-        emit("game_start_response", '{ "response": "GAME_NOT_JOINED" }')
-    games[gid].start_round()
+    if not games[json["gid"]].has_player(json["username"]):
+        emit("wrong_game_error")
+    games[json["gid"]].start_round()
 
+@socketio.on("list_submit")
+def handle_list_submit(json, methods = ["GET", "POST"]):
+    if json["gid"] not in games.keys():
+        emit("game_dne_error")
+        return
+    if not games[json["gid"]].add_player_list(json["username"], json["list"]):
+        emit("list_submit_failed_error")
     
-
+@socketio.on("chat_message")
+def handle_chat_message(json, methods = ["GET", "POST"]):
+    if json["gid"] not in games.keys():
+        emit("game_dne_error")
+        return
+    if not games[json["gid"]].has_player(json["username"]):
+        emit("wrong_game_error")
+    emit("chat_message", json, room = str(json["gid"]))
+    
 if __name__ == "__main__":    
     print('Starting Boggle server!')
     print('Loading dictionaries...')

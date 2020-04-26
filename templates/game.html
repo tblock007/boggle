@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>Brilliantly Orthographic Grid Game: Letters Entwined v0.2</title>
+    <title>Brilliantly Orthographic Grid Game: Letters Entwined v0.9</title>
     <link rel= "stylesheet" type= "text/css" href="{{ url_for('static', filename='css/client.css') }}">
   </head>
   <body>
@@ -15,6 +15,11 @@
     <script src="http://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
     <script type="text/jsx" src="{{ url_for('static', filename='js/game.jsx') }}"></script>
-      
+    <script type="text/jsx">
+      ReactDOM.render(
+        <App gid="{{ gid }}" />,
+        document.getElementById("root")
+      );
+    </script>
   </body>
 </html>
