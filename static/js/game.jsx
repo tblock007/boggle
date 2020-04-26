@@ -266,8 +266,6 @@ class App extends React.Component {
         });
     }
 
-    // TODO: implement flip H, V, and letter shortcuts?
-
     rotateBoard() {
         const width = this.state.width;
         const height = this.state.height;
@@ -275,12 +273,33 @@ class App extends React.Component {
 
         let newLetters = [];
         for (let col = width - 1; col >= 0; col--) {
+            newLetters.push([]);
             for (let row = 0; row < height; row++) {
-                let i = (row * width) + col
-                newLetters.push(oldLetters[i]);
+                newLetters[width - 1 - col].push(oldLetters[row][col]);
             }
         }
         this.setState({ height: width, width: height, letters: newLetters });
+    }
+
+    // TODO: implement letter shortcuts?
+    flipBoardHorizontal() {
+        const oldLetters = this.state.letters;
+        let newLetters = [];
+        for (let row = 0; row < height; row++) {
+            newLetters.push([]);
+            for (let col = width - 1; col >= 0; col--) {
+                newLetters[row].push(oldLetters[row][col]);
+            }
+        }
+        this.setState({ letters: newLetters });
+    }
+
+    flipBoardVertical() {
+        this.rotateBoard()
+        this.flipBoardHorizontal()
+        this.rotateBoard()
+        this.rotateBoard()
+        this.rotateBoard()
     }
 
     timeRemaining() {
@@ -323,6 +342,8 @@ class App extends React.Component {
                     roundTimeRemaining={this.timeRemaining()}                   
                     onEnterMessage={(msg) => this.sendMessage(msg)}
                     onRotateClicked = {() => this.rotateBoard()}
+                    onFlipHorizontalClicked = {() => this.flipBoardHorizontal()}
+                    onFlipVerticalClicked = {() => this.flipBoardVertical()}
                 />
             </div>
         )
