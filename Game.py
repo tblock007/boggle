@@ -15,12 +15,11 @@ class Game:
 
     states = ['NEW_GAME', 'ROUND_IN_PROGRESS', 'GATHERING_LISTS', 'BETWEEN_ROUNDS']
 
-    def __init__(self, id, properties, grid, analyzer):
-        self.id = id
+    def __init__(self, gid, properties, grid, analyzer):
+        self.gid = gid
         self.properties = properties
         self.grid = grid
         self.analyzer = analyzer
-        self.players = set()
         self.player_lists = dict()
         self.player_scores = dict()
 
@@ -36,25 +35,28 @@ class Game:
     def add_player(self, username):
         if self.state == 'ROUND_IN_PROGRESS':
             return False
-        self.players.add(username)
-        self.player_lists[username] = []
+        if username in self.player_scores.keys():
+            return False
         self.player_scores[username] = 0
+        self.player_lists[username] = []
         return True
 
     def remove_player(self, username):
-        if username in self.players:
-            self.players.remove(username)
+        if username in self.player_scores.keys():
             self.player_lists.pop(username, None)
             self.player_scores.pop(username, None)
             return True
         return False
 
+    def has_player(self, username):
+        return username in self.player_scores.keys()
+
     def num_players(self):
-        return len(self.players)
+        return len(self.player_scores)
 
     def add_player_list(self, username, word_list):
         if self.state == 'GATHERING_LISTS':
-            if username in self.players:
+            if username in self.player_scores.keys():
                 self.player_lists[username] = word_list
                 self.try_get_results()
                 return True
@@ -83,7 +85,7 @@ class Game:
         return response
 
     def all_lists_received(self):
-        return all((p in self.player_lists.keys()) for p in self.players)
+        return all((p in self.player_lists.keys()) for p in self.player_scores.keys())
   
     def get_common_words(self):
         # Get counts for each player, and then sum them to obtain counts for all words found.
@@ -107,12 +109,12 @@ class GameEncoder(json.JSONEncoder):
     def default(self, game):
         if isinstance(game, Game):
             encoded = dict()
-            encoded["id"] = game.id
+            encoded["gid"] = game.gid
             encoded["state"] = game.state
             encoded["grid"] = game.grid.letters
             encoded["min_letters"] = game.properties.min_letters
             encoded["minutes"] = game.properties.minutes
             encoded["language"] = game.analyzer.language
-
+            encoded["player_scores"] = game.player_scores
             return encoded
         return json.JSONEncoder.default(self, game)
