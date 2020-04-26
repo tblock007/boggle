@@ -72,13 +72,15 @@ function Square(props) {
 }
 
 function Board(props) {
-    let pixelHeight = Math.floor(480 / props.height) - 2;
+    const height = props.letters.length;
+    const width = props.letters[0].length;
+    let pixelHeight = Math.floor(480 / height) - 2;
     const rows = []
-    for (let i = 0; i < props.height; i++) {
+    for (let i = 0; i < height; i++) {
         const squares = []
-        for (let j = 0; j < props.width; j++) {
-            index = i * props.width + j;
-            let l = props.letters[index];
+        for (let j = 0; j < width; j++) {
+            index = i * width + j;
+            let l = props.letters[i][j];
             squares.push(<Square letter={l} key={index} pixelHeight={pixelHeight} />)
         }
         rows.push(<div className="board-row" key={i}>{squares}</div>)
@@ -88,18 +90,12 @@ function Board(props) {
 
 class Game extends React.Component {    
     render() {
-        const height = this.props.height;
-        const width = this.props.width;
         const letters = this.props.letters;
         const words = this.props.words;
 
         return (
             <div className="game">
-                <Board
-                        height={height}
-                        width={width}
-                        letters={letters}
-                />
+                <Board letters={letters} />
                 <WordInput words={words} onEnter={(w) => this.props.addWord(w)} onDel={() => this.props.removeWord()} />
             </div>
         );
@@ -142,7 +138,10 @@ class ControlPanel extends React.Component {
             <div className="control">
                 <div className="panel">
                     {info}
-                    <button className="other-button" onClick={() => this.props.onRotateClicked()}>ROTATE BOARD</button>
+                    <button className="other-button" onClick={() => this.props.onStartClicked()}>START ROUND</button>
+                    <button className="other-button" onClick={() => this.props.onRotateClicked()}>ROTATE</button>
+                    <button className="other-button" onClick={() => this.props.onFlipHorizontalClicked()}>FLIP HORIZONTAL</button>
+                    <button className="other-button" onClick={() => this.props.onFlipVerticalClicked()}>FLIP VERTICAL</button>
                     <div className="timer">{this.props.roundTimeRemaining}</div>                                     
                 </div>
                 <div className="chat">
@@ -163,9 +162,7 @@ class App extends React.Component {
             username: null,
             gid: props.gid,
             gameState: null,
-            height: 5,
-            width: 5,
-            letters: [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+            letters: [[' ', ' ', ' ', ' ', ' '], [' ', ' ', ' ', ' ', ' '], [' ', ' ', ' ', ' ', ' '], [' ', ' ', ' ', ' ', ' '], [' ', ' ', ' ', ' ', ' ']],
             minimumLetters: null,
             minutes: null,
             language: null,
@@ -193,11 +190,7 @@ class App extends React.Component {
         });
 
         if (game.grid !== null) {
-            this.setState({
-                height: game.grid.length,
-                width: game.grid[0].length,
-                letters: [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'A', 'A', 'A'],
-            });
+            this.setState({ letters: game.grid });
         }
     }
 
@@ -256,8 +249,6 @@ class App extends React.Component {
         this.setState({ words: this.state.words.slice(1)});
     }
 
-    // TODO: Implement start and end round
-
     sendMessage(msg) {
         this.state.socket.emit('chat_message', { 
             gid: this.state.gid, 
@@ -266,9 +257,17 @@ class App extends React.Component {
         });
     }
 
+    // TODO: Implement start and end round
+    startRound() {
+        this.state.socket.emit("game_start", {
+            username: this.state.username,
+            gid: this.state.gid,
+        });
+    }
+
     rotateBoard() {
-        const width = this.state.width;
-        const height = this.state.height;
+        const height = this.state.letters.length;
+        const width = this.state.letters[0].length;
         const oldLetters = this.state.letters;
 
         let newLetters = [];
@@ -278,11 +277,13 @@ class App extends React.Component {
                 newLetters[width - 1 - col].push(oldLetters[row][col]);
             }
         }
-        this.setState({ height: width, width: height, letters: newLetters });
+        this.setState({ letters: newLetters });
     }
 
     // TODO: implement letter shortcuts?
     flipBoardHorizontal() {
+        const height = this.state.letters.length;
+        const width = this.state.letters[0].length;
         const oldLetters = this.state.letters;
         let newLetters = [];
         for (let row = 0; row < height; row++) {
@@ -295,11 +296,17 @@ class App extends React.Component {
     }
 
     flipBoardVertical() {
-        this.rotateBoard()
-        this.flipBoardHorizontal()
-        this.rotateBoard()
-        this.rotateBoard()
-        this.rotateBoard()
+        const height = this.state.letters.length;
+        const width = this.state.letters[0].length;
+        const oldLetters = this.state.letters;
+        let newLetters = [];
+        for (let row = height - 1; row >= 0; row--) {
+            newLetters.push([]);
+            for (let col = 0; col < width; col++) {
+                newLetters[height - 1 - row].push(oldLetters[row][col]);
+            }
+        }
+        this.setState({ letters: newLetters });
     }
 
     timeRemaining() {
@@ -327,9 +334,7 @@ class App extends React.Component {
         return (
             <div>
                 <Game 
-                    height={this.state.height} 
-                    width={this.state.width} 
-                    letters={this.state.letters} 
+                    letters={this.state.letters}
                     words={this.state.words}
                     addWord={(w) => this.addWord(w)} 
                     removeWord={() => this.removeWord()}    
@@ -341,6 +346,7 @@ class App extends React.Component {
                     messages={this.state.messages}
                     roundTimeRemaining={this.timeRemaining()}                   
                     onEnterMessage={(msg) => this.sendMessage(msg)}
+                    onStartClicked = {() => this.startRound()}
                     onRotateClicked = {() => this.rotateBoard()}
                     onFlipHorizontalClicked = {() => this.flipBoardHorizontal()}
                     onFlipVerticalClicked = {() => this.flipBoardVertical()}

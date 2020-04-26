@@ -29,13 +29,11 @@ def join_game(gid):
 
 @socketio.on("game_join")
 def handle_game_join_event(json, methods = ["GET", "POST"]):
-    print("Handling game join event from {0} in game {1}. {2}".format(json["username"], json["gid"], json))
     if json["gid"] not in games.keys():
         emit("game_dne_error")
         return
     if games[json["gid"]].add_player(json["username"]):        
         join_room(json["gid"])
-        print("Emitting {0}".format(games[json["gid"]].encode()))
         emit("game_state_update", {"message": "{0} has joined the room!".format(json["username"]), "game": games[json["gid"]].encode()}, room = str(json["gid"]))
     else:
         emit("join_failed_error")
@@ -48,6 +46,7 @@ def handle_game_start_event(json, methods = ["GET", "POST"]):
     if not games[json["gid"]].has_player(json["username"]):
         emit("wrong_game_error")
     games[json["gid"]].start_round()
+    emit("game_state_update", {"message": "Game has begun!", "game": games[json["gid"]].encode()}, room = str(json["gid"]))
 
 @socketio.on("list_submit")
 def handle_list_submit(json, methods = ["GET", "POST"]):
