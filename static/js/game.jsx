@@ -139,6 +139,7 @@ class ControlPanel extends React.Component {
                 <div className="panel">
                     {info}
                     <button className="other-button" onClick={() => this.props.onStartClicked()}>START ROUND</button>
+                    <button className="other-button" onClick={() => this.props.onEndClicked()}>END ROUND</button>
                     <button className="other-button" onClick={() => this.props.onRotateClicked()}>ROTATE</button>
                     <button className="other-button" onClick={() => this.props.onFlipHorizontalClicked()}>FLIP HORIZONTAL</button>
                     <button className="other-button" onClick={() => this.props.onFlipVerticalClicked()}>FLIP VERTICAL</button>
@@ -200,7 +201,7 @@ class App extends React.Component {
             this.updateGameState(resp.game);
             this.log("Server", resp.message);
         });
-        this.state.socket.on("list_request", () => { 
+        this.state.socket.on("list_request", () => {
             this.state.socket.emit("list_submit", {
                 username: this.state.username,
                 gid: this.state.gid,
@@ -257,9 +258,16 @@ class App extends React.Component {
         });
     }
 
-    // TODO: Implement start and end round
     startRound() {
         this.state.socket.emit("game_start", {
+            username: this.state.username,
+            gid: this.state.gid,
+        });
+    }
+
+    // TODO: Eliminate this call in favor of server-side scheduling
+    endRound() {
+        this.state.socket.emit("game_end", {
             username: this.state.username,
             gid: this.state.gid,
         });
@@ -347,6 +355,7 @@ class App extends React.Component {
                     roundTimeRemaining={this.timeRemaining()}                   
                     onEnterMessage={(msg) => this.sendMessage(msg)}
                     onStartClicked = {() => this.startRound()}
+                    onEndClicked = {() => this.endRound()}
                     onRotateClicked = {() => this.rotateBoard()}
                     onFlipHorizontalClicked = {() => this.flipBoardHorizontal()}
                     onFlipVerticalClicked = {() => this.flipBoardVertical()}

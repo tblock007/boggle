@@ -48,6 +48,17 @@ def handle_game_start_event(json, methods = ["GET", "POST"]):
     games[json["gid"]].start_round()
     emit("game_state_update", {"message": "Game has begun!", "game": games[json["gid"]].encode()}, room = str(json["gid"]))
 
+# TODO: Eliminate this call in favor of scheduling with threads
+@socketio.on("game_end")
+def handle_game_end_event(json, methods = ["GET", "POST"]):
+    if json["gid"] not in games.keys():
+        emit("game_dne_error")
+        return
+    if not games[json["gid"]].has_player(json["username"]):
+        emit("wrong_game_error")
+    games[json["gid"]].end_round()
+    emit("list_request", room = str(json["gid"]))
+
 @socketio.on("list_submit")
 def handle_list_submit(json, methods = ["GET", "POST"]):
     if json["gid"] not in games.keys():
