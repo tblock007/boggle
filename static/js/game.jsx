@@ -307,7 +307,6 @@ class App extends React.Component {
         this.setState({ letters: newLetters });
     }
 
-    // TODO: implement letter shortcuts?
     flipBoardHorizontal() {
         const height = this.state.letters.length;
         const width = this.state.letters[0].length;
