@@ -25,8 +25,20 @@ class WordInput extends React.Component {
     }
 
     handleKeyDown(e) {
-        if (e.keyCode == 13) { // the enter key code    
-            if (this.state.word !== "") {
+        if (e.keyCode == 13) { // the enter key code
+            if (this.state.word === "R" || this.state.word === "r") {
+                this.setState({ word: "" });
+                this.props.onR();
+            }
+            else if (this.state.word === "H" || this.state.word === "h") {
+                this.setState({ word: "" });
+                this.props.onH();
+            }  
+            else if (this.state.word === "V" || this.state.word === "v") {
+                this.setState({ word: "" });
+                this.props.onV();
+            }  
+            else if (this.state.word !== "") {
                 this.setState({ word: "" });
                 this.props.onEnter(this.state.word);
             }
@@ -96,7 +108,14 @@ class Game extends React.Component {
         return (
             <div className="game">
                 <Board letters={letters} />
-                <WordInput words={words} onEnter={(w) => this.props.addWord(w)} onDel={() => this.props.removeWord()} />
+                <WordInput 
+                    words = {words} 
+                    onEnter = {this.props.addWord} 
+                    onDel = {this.props.removeWord}
+                    onR = {this.props.rotate}
+                    onH = {this.props.flipH}
+                    onV = {this.props.flipV} 
+                />
             </div>
         );
     }
@@ -345,7 +364,10 @@ class App extends React.Component {
                     letters={this.state.letters}
                     words={this.state.words}
                     addWord={(w) => this.addWord(w)} 
-                    removeWord={() => this.removeWord()}    
+                    removeWord={() => this.removeWord()}
+                    rotate={() => this.rotateBoard()}
+                    flipH={() => this.flipBoardHorizontal()}
+                    flipV={() => this.flipBoardVertical()} 
                 />
                 <ControlPanel 
                     gid={this.state.gid}
