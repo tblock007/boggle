@@ -14,7 +14,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.1.0/react-dom.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+    <script type="text/jsx" src="{{ url_for('static', filename='js/login_dialog.jsx') }}"></script>
     <script type="text/jsx" src="{{ url_for('static', filename='js/game.jsx') }}"></script>
+    <script type="text/jsx" src="{{ url_for('static', filename='js/control_panel.jsx') }}"></script>
+    <script type="text/jsx" src="{{ url_for('static', filename='js/main.jsx') }}"></script>
     <script type="text/jsx">
       ReactDOM.render(
         <App gid="{{ gid }}" />,
