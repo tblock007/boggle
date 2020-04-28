@@ -13,6 +13,9 @@ socketio = SocketIO(app)
 def list_request_callback(gid):
     socketio.emit("list_request", room = str(gid))
 
+def send_analysis_callback(gid, analysis):
+    socketio.emit("game_analysis", analysis, room = str(gid))
+
 @app.route("/")
 def temporary_redirect():
     return "Please go to *.html/join/GAME to join a game."
@@ -21,7 +24,7 @@ def temporary_redirect():
 def create_game(gid, height, width, min_letters, minutes, language):
     grid = Grid(width, height, True)
     analyzer = Analyzer(lexicons.get(language.lower(), english_lexicon), language)
-    games[gid] = Game(gid, GameProperties(min_letters = min_letters, minutes = minutes), grid, analyzer, list_request_callback)
+    games[gid] = Game(gid, GameProperties(min_letters = min_letters, minutes = minutes), grid, analyzer, list_request_callback, send_analysis_callback)
     return "Successfully created game {gid} with size {height}x{width}, letter minimum {min_letters}, time limit {minutes} minutes, and language {language}".format(gid = games[gid].gid, height = games[gid].grid.height, width = games[gid].grid.width, min_letters = games[gid].properties.min_letters, minutes = games[gid].properties.minutes, language = games[gid].analyzer.language)
 
 @app.route("/game/<gid>")

@@ -6,7 +6,7 @@ from functools import reduce
 from transitions import Machine
 from typing import NamedTuple
 
-from GameResults import GameResults
+from GameResults import GameResults, GameResultsEncoder
 from PrefixTrie import PrefixTrie
 from Analyzer import Analyzer
 
@@ -19,13 +19,14 @@ class Game:
 
     states = ['NEW_GAME', 'ROUND_IN_PROGRESS', 'GATHERING_LISTS', 'BETWEEN_ROUNDS']
 
-    def __init__(self, gid, properties, grid, analyzer, list_request_callback):
+    def __init__(self, gid, properties, grid, analyzer, list_request_callback, send_analysis_callback):
         self.gid = gid
         self.properties = properties
         self.grid = grid
         self.analyzer = analyzer
         self.scheduler = BackgroundScheduler()
         self.list_request_callback = list_request_callback
+        self.send_analysis_callback = send_analysis_callback
         self.player_lists = dict()
         self.player_scores = dict()
 
@@ -93,7 +94,7 @@ class Game:
             scored_list = sorted(scored)
             response.add_result(player, "scored", scored_list)
             response.add_result(player, "scores", [self.score(w) for w in scored_list])
-        return response
+        self.send_analysis_callback(self.gid, GameResultsEncoder().encode(response))
 
     def all_lists_received(self):
         return all((p in self.player_lists.keys()) for p in self.player_scores.keys())
