@@ -1,11 +1,15 @@
 import json
+from apscheduler.schedulers.background import BackgroundScheduler
 from collections import Counter
+from datetime import datetime, timedelta
 from functools import reduce
 from transitions import Machine
 from typing import NamedTuple
 
+from GameResults import GameResults
 from PrefixTrie import PrefixTrie
 from Analyzer import Analyzer
+
 
 class GameProperties(NamedTuple):    
     min_letters: int = 4
@@ -15,11 +19,13 @@ class Game:
 
     states = ['NEW_GAME', 'ROUND_IN_PROGRESS', 'GATHERING_LISTS', 'BETWEEN_ROUNDS']
 
-    def __init__(self, gid, properties, grid, analyzer):
+    def __init__(self, gid, properties, grid, analyzer, list_request_callback):
         self.gid = gid
         self.properties = properties
         self.grid = grid
         self.analyzer = analyzer
+        self.scheduler = BackgroundScheduler()
+        self.list_request_callback = list_request_callback
         self.player_lists = dict()
         self.player_scores = dict()
 
@@ -29,6 +35,8 @@ class Game:
         self.machine.add_transition('try_get_results', 'GATHERING_LISTS', 'BETWEEN_ROUNDS', conditions = ['all_lists_received'])
         self.machine.on_enter_ROUND_IN_PROGRESS('reset_board')
         self.machine.on_enter_BETWEEN_ROUNDS('analyze_endgame')
+
+        self.scheduler.start()
 
     # TODO: Make all of the methods that could be called by server return a response to be sent to all players in the room
     # Add players and such would just be a response that adds SERVER message: x has joined the room! etc.
@@ -62,26 +70,29 @@ class Game:
                 return True
         return False
 
+    def scheduled_end_round(self):
+        self.end_round()
+        self.list_request_callback(self.gid)
+
     def reset_board(self):
         self.player_lists = dict()
         self.grid.reroll()
+        self.scheduler.add_job(self.scheduled_end_round, trigger = "date", next_run_time = datetime.now() + timedelta(0, self.properties.minutes * 60))
 
     def analyze_endgame(self):
+        response = GameResults()
         self.analyzer.set_grid(self.grid.letters)
-        all_words =self.get_all_words()
-        response = {"scoreboard": {}, "solution": all_words}
+        response.set_solution(self.get_all_words())
         struck = self.get_common_words()
         for player, word_list in self.player_lists.items():
             invalid = set(w for w in word_list if (len(w) < self.properties.min_letters or not self.analyzer.check(w)))
             remaining = set(word_list) - invalid
+            response.add_result(player, "invalid", sorted(invalid))
+            response.add_result(player, "struck", sorted(remaining & struck))
             scored = remaining - struck
-            response["scoreboard"][player] = dict()            
-            response["scoreboard"][player]["invalid"] = sorted(invalid)
-            response["scoreboard"][player]["struck"] = sorted(remaining & struck)
-            response["scoreboard"][player]["scored"] = sorted(scored)
-            response["scoreboard"][player]["scores"] = [self.score(w) for w in response["scoreboard"][player]["scored"]]
-            response["scoreboard"][player]["total_score"] = sum(response["scoreboard"][player]["scores"])
-
+            scored_list = sorted(scored)
+            response.add_result(player, "scored", scored_list)
+            response.add_result(player, "scores", [self.score(w) for w in scored_list])
         return response
 
     def all_lists_received(self):

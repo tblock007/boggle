@@ -11,7 +11,7 @@ class GameResultsTest(unittest.TestCase):
 
     def test_JSON_encode(self):
         results = GameResults()
-        results.set_solution(["ban", "bat", "cat"])
+        results.set_solution(["cat", "ban", "bat"])
 
         results.add_result("T-block", "invalid", ["bal"])
         results.add_result("T-block", "struck", ["bad"])

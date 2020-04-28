@@ -10,6 +10,9 @@ GAMELIMIT = 10
 app = Flask(__name__)
 socketio = SocketIO(app)
 
+def list_request_callback(gid):
+    socketio.emit("list_request", room = str(gid))
+
 @app.route("/")
 def temporary_redirect():
     return "Please go to *.html/join/GAME to join a game."
@@ -18,7 +21,7 @@ def temporary_redirect():
 def create_game(gid, height, width, min_letters, minutes, language):
     grid = Grid(width, height, True)
     analyzer = Analyzer(lexicons.get(language.lower(), english_lexicon), language)
-    games[gid] = Game(gid, GameProperties(min_letters = min_letters, minutes = minutes), grid, analyzer)
+    games[gid] = Game(gid, GameProperties(min_letters = min_letters, minutes = minutes), grid, analyzer, list_request_callback)
     return "Successfully created game {gid} with size {height}x{width}, letter minimum {min_letters}, time limit {minutes} minutes, and language {language}".format(gid = games[gid].gid, height = games[gid].grid.height, width = games[gid].grid.width, min_letters = games[gid].properties.min_letters, minutes = games[gid].properties.minutes, language = games[gid].analyzer.language)
 
 @app.route("/game/<gid>")
@@ -47,17 +50,6 @@ def handle_game_start_event(json, methods = ["GET", "POST"]):
         emit("wrong_game_error")
     games[json["gid"]].start_round()
     emit("game_state_update", {"message": "Game has begun!", "game": games[json["gid"]].encode()}, room = str(json["gid"]))
-
-# TODO: Eliminate this call in favor of scheduling with threads
-@socketio.on("game_end")
-def handle_game_end_event(json, methods = ["GET", "POST"]):
-    if json["gid"] not in games.keys():
-        emit("game_dne_error")
-        return
-    if not games[json["gid"]].has_player(json["username"]):
-        emit("wrong_game_error")
-    games[json["gid"]].end_round()
-    emit("list_request", room = str(json["gid"]))
 
 @socketio.on("list_submit")
 def handle_list_submit(json, methods = ["GET", "POST"]):
