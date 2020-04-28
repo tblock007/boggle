@@ -50,6 +50,10 @@ class App extends React.Component {
                 list: this.state.words
             });
         }); 
+        // TODO: Handle display of analysis
+        this.state.socket.on("game_analysis", resp => {
+            alert(resp);
+        });
         this.state.socket.on("chat_message", resp => { 
             this.log(resp.username, resp.message); 
             $('.messages').scrollTop($('.messages')[0].scrollHeight + 300);

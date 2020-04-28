@@ -80,6 +80,14 @@ class Game:
         self.grid.reroll()
         self.scheduler.add_job(self.scheduled_end_round, trigger = "date", next_run_time = datetime.now() + timedelta(0, self.properties.minutes * 60))
 
+    def score(self, word):
+        if len(word) <= 4: return 1
+        elif len(word) == 5: return 2
+        elif len(word) == 6: return 3
+        elif len(word) == 7: return 5
+        elif len(word) == 8: return 11
+        else: return (2 * len(word))
+
     def analyze_endgame(self):
         response = GameResults()
         self.analyzer.set_grid(self.grid.letters)
@@ -119,14 +127,6 @@ class Game:
         encoded["language"] = self.analyzer.language
         encoded["player_scores"] = self.player_scores
         return encoded
-
-    def score(word):
-        if len(word) <= 4: return 1
-        elif len(word) == 5: return 2
-        elif len(word) == 6: return 3
-        elif len(word) == 7: return 5
-        elif len(word) == 8: return 11
-        else: return (2 * len(word))
 
 class GameEncoder(json.JSONEncoder):
     def default(self, game):

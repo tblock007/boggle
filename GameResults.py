@@ -15,7 +15,7 @@ class GameResults:
             raise Exception("Attempted to add improper list type to GameResults.")
         if player not in self.scoreboard.keys():
             self.scoreboard[player] = dict()
-        self.scoreboard[player][list_type] = sorted(values)
+        self.scoreboard[player][list_type] = values
 
     def encode(self):
         return {"solution": self.solution, "scoreboard": self.scoreboard}

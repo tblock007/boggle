@@ -23,7 +23,7 @@ def temporary_redirect():
 @app.route("/create/<gid>/<int:height>/<int:width>/<int:min_letters>/<int:minutes>/<language>")
 def create_game(gid, height, width, min_letters, minutes, language):
     grid = Grid(width, height, True)
-    analyzer = Analyzer(lexicons.get(language.lower(), english_lexicon), language)
+    analyzer = Analyzer(lexicons.get(language.lower(), lexicons["english"]), language)
     games[gid] = Game(gid, GameProperties(min_letters = min_letters, minutes = minutes), grid, analyzer, list_request_callback, send_analysis_callback)
     return "Successfully created game {gid} with size {height}x{width}, letter minimum {min_letters}, time limit {minutes} minutes, and language {language}".format(gid = games[gid].gid, height = games[gid].grid.height, width = games[gid].grid.width, min_letters = games[gid].properties.min_letters, minutes = games[gid].properties.minutes, language = games[gid].analyzer.language)
 
@@ -75,9 +75,8 @@ if __name__ == "__main__":
     print('Starting Boggle server!')
     print('Loading dictionaries...')
     lexicons = dict()
-    # englishDictionary = PrefixTrie("dictionaries/csw_en.txt")
-    # frenchDictionary = PrefixTrie("dictionaries/ods5_fr.txt")
-    english_lexicon = PrefixTrie("lexicons/prefix_trie_test.txt")
+    lexicons["english"] = PrefixTrie("lexicons/csw_en.txt")
+    lexicons["french"] = PrefixTrie("lexicons/ods5_fr.txt")
     print('Dictionaries loaded!')
 
     games = dict()
