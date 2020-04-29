@@ -35,17 +35,82 @@ class WordInput extends React.Component {
 
         return (
             <div className="word-input">
-                <div className="tooltip">
-                    <div className="tooltiptext">
-                        Type words found and press Enter to add them to your list.  Press DEL at any time to delete the most recent entry from your list.
-                    </div>
-                    <input type="text" value={this.state.word} onKeyDown={(e) => this.handleKeyDown(e)} onChange={(e) => this.setState({ word: e.target.value })} placeholder="Enter found words" />
-                </div> 
+                <input type="text" value={this.state.word} onKeyDown={(e) => this.handleKeyDown(e)} onChange={(e) => this.setState({ word: e.target.value })} placeholder="Enter found words" />
                 <div id="wordlist">
                     <ul>{list}</ul>
                 </div>
             </div>
         );
+    }
+}
+
+class Scoreboard extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        return (
+            <div className="scoreboard">
+                {this.props.scoreboard}
+            </div>
+        );
+    }
+}
+
+class Solution extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        return (
+            <div className="solution">
+                {this.props.solution}
+            </div>
+        );
+    }
+}
+
+class GamePanel extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {mode: "word-input" };
+    }
+
+    render() {
+        let wordInputTab = (<button className="selectable-header" onClick={() => { this.setState({ mode: "word-input" });}}>Word Input</button>);
+        let scoreboardTab = (<button className="selectable-header" onClick={() => { this.setState({ mode: "scoreboard" });}}>Scoreboard</button>);
+        let solutionTab = (<button className="selectable-header" onClick={() => { this.setState({ mode: "solution" });}}>Solution</button>);
+        if (this.state.mode === "word-input") {
+            var content = (<WordInput 
+                            words = {this.props.words} 
+                            onEnter = {this.props.onEnter} 
+                            onDel = {this.props.onDel}
+                            onR = {this.props.onR}
+                            onH = {this.props.onH}
+                            onV = {this.props.onV} 
+                        />);
+            wordInputTab = (<button className="selected-header">Word Input</button>);
+        }
+        else if (this.state.mode === "scoreboard") {
+            var content = (<Scoreboard scoreboard = {this.props.scoreboard} />);
+            scoreboardTab = (<button className="selected-header">Scoreboard</button>);
+        }
+        else if (this.state.mode === "solution") {
+            var content = (<Solution solution = {this.props.solution} />);
+            solutionTab = (<button className="selected-header">Solution</button>);
+        }
+        return (
+            <div className="game-panel">
+                {wordInputTab}
+                {scoreboardTab}
+                {solutionTab}
+                <div className="game-panel-content">
+                    {content}    
+                </div>
+            </div>
+        )
     }
 }
 
@@ -87,14 +152,16 @@ class Game extends React.Component {
 
         return (
             <div className="game">
-                <Board letters={letters} />
-                <WordInput 
+                <Board className="board" letters={letters} />
+                <GamePanel 
                     words = {words} 
                     onEnter = {this.props.addWord} 
                     onDel = {this.props.removeWord}
                     onR = {this.props.rotate}
                     onH = {this.props.flipH}
                     onV = {this.props.flipV} 
+                    scoreboard = "Scores for the round will be displayed when the round ends. (pass from main.jsx)"
+                    solution = "Solution will be available when the round ends. (pass from main.jsx)"                    
                 />
             </div>
         );
