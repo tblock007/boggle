@@ -102,7 +102,7 @@ class Game:
             scored_list = sorted(scored)
             response.add_result(player, "scored", scored_list)
             response.add_result(player, "scores", [self.score(w) for w in scored_list])
-        self.send_analysis_callback(self.gid, GameResultsEncoder().encode(response))
+        self.send_analysis_callback(self.gid, response.encode())
 
     def all_lists_received(self):
         return all((p in self.player_lists.keys()) for p in self.player_scores.keys())

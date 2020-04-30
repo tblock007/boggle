@@ -8,7 +8,7 @@ class GameResults:
         self.scoreboard = dict()
 
     def set_solution(self, solved_words):
-        self.solution = sorted(solved_words)
+        self.solution = solved_words
 
     def add_result(self, player, list_type, values):
         if list_type != "invalid" and list_type != "struck" and list_type != "scored" and list_type != "scores":
@@ -18,7 +18,10 @@ class GameResults:
         self.scoreboard[player][list_type] = values
 
     def encode(self):
-        return {"solution": self.solution, "scoreboard": self.scoreboard}
+        result = dict()
+        result["scoreboard"] = self.scoreboard
+        result["solution"] = self.solution
+        return result
 
 class GameResultsEncoder(json.JSONEncoder):
     def default(self, results):

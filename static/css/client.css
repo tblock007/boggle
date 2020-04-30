@@ -136,14 +136,32 @@ body {
   cursor: pointer;
 }
 
+.player-scoreboard {
+  float: left;
+  padding: 30px;
+  font-family: "Courier New";
+  overflow-y: auto;
+}
+
 .word-input {
   flex: 1 1 auto;
+}
+
+.game-panel-content-null {
+  width: 80%;
+  font: 12px "Century Gothic", Futura, sans-serif;
+  font-style: italic;
 }
 
 #wordlist {
   margin-top: 10px;
 }
 
+.wordscore {
+  display: inline;
+  font-weight: bold;
+  color: red;
+}
 
 /*************************/
 /* CPANEL ELEMENTS       */

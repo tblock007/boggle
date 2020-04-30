@@ -16,9 +16,8 @@ class App extends React.Component {
             messages: [],
 
             roundEndTime: null,
-            modalMessage: null,
-            lastScoreboard: null,
-            lastSolvedList: null
+            scoreboard: null,
+            solution: null,
         };
     }
 
@@ -49,10 +48,9 @@ class App extends React.Component {
                 gid: this.state.gid,
                 list: this.state.words
             });
-        }); 
-        // TODO: Handle display of analysis
+        });
         this.state.socket.on("game_analysis", resp => {
-            alert(resp);
+            this.setState({ scoreboard: resp.scoreboard, solution: resp.solution });
         });
         this.state.socket.on("chat_message", resp => { 
             this.log(resp.username, resp.message); 
@@ -194,6 +192,8 @@ class App extends React.Component {
                     rotate={() => this.rotateBoard()}
                     flipH={() => this.flipBoardHorizontal()}
                     flipV={() => this.flipBoardVertical()} 
+                    scoreboard={this.state.scoreboard}
+                    solution={this.state.solution}
                 />
                 <ControlPanel 
                     gid={this.state.gid}

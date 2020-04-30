@@ -50,11 +50,49 @@ class Scoreboard extends React.Component {
     }
 
     render() {
-        return (
-            <div className="scoreboard">
-                {this.props.scoreboard}
-            </div>
-        );
+        if (this.props.scoreboard === null) {
+            return (
+                <div className="game-panel-content-null">
+                    Game results will be shown here at the end of the round.
+                </div>
+
+            );
+        }
+        else {
+            const results = this.props.scoreboard;
+            let playerResults = [];
+            for (let player in results) {
+                if (results.hasOwnProperty(player)) {
+
+                    let playerlistInvalid = results[player].invalid.map((word, index) => {
+                        return (<li key={"in" + index.toString()}><s>{word} ?</s></li>);
+                    });
+
+                    let playerlistStruck = results[player].struck.map((word, index) => {
+                        return (<li key={"st" + index.toString()}><s>{word}</s></li>);
+                    });
+
+                    let playerlistScored = results[player].scored.map((word, index) => {
+                        return (<li key={"sc" + index.toString()}><div className="wordscore">{results[player].scores[index]}</div> {word}</li>);
+                    });
+
+                    let sum = results[player].scores.reduce((a, b) => a + b, 0)
+
+                    playerResults.push(
+                        <div className="player-scoreboard" key={player}>
+                            [Score: {sum}] {player} -
+                            <ul>{playerlistScored.concat(playerlistStruck, playerlistInvalid)}</ul>
+                        </div>
+                    );
+                }
+            }
+            
+            return (
+                <div className="scoreboard">
+                    {playerResults}
+                </div>
+            );
+        }
     }
 }
 
@@ -64,11 +102,26 @@ class Solution extends React.Component {
     }
 
     render() {
-        return (
-            <div className="solution">
-                {this.props.solution}
-            </div>
-        );
+        if (this.props.solution === null) {
+            return (
+                <div className="game-panel-content-null">
+                    Board solution will be shown here at the end of the round.
+                </div>
+
+            );
+        }
+        else {
+            const list = this.props.solution.map((word, index) => {
+                return (<li key={index}>{word.toUpperCase()}</li>);
+            });
+            return (
+                <div className="solution">
+                    <ul>
+                        {list}
+                    </ul>
+                </div>
+            );
+        }
     }
 }
 
@@ -160,8 +213,8 @@ class Game extends React.Component {
                     onR = {this.props.rotate}
                     onH = {this.props.flipH}
                     onV = {this.props.flipV} 
-                    scoreboard = "Scores for the round will be displayed when the round ends. (pass from main.jsx)"
-                    solution = "Solution will be available when the round ends. (pass from main.jsx)"                    
+                    scoreboard = {this.props.scoreboard}
+                    solution = {this.props.solution}                    
                 />
             </div>
         );
