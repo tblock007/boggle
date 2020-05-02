@@ -35,27 +35,21 @@ class App extends React.Component {
         if (game.grid !== null) {
             this.setState({ letters: game.grid });
         }
-
-        if (game.state == "GATHERING_LISTS") {
-            this.setState({ gamePanelMode: "scoreboard" });
-        }
-    }
-
-    resetForNewRound() {
-        this.setState({
-            words: [],
-            scoreboard: null,
-            solution: null,
-        });
     }
 
     componentDidMount() {
         this.state.socket = io.connect("http://" + document.domain + ":" + location.port);
         this.state.socket.on("game_state_update", (resp) => {
             this.updateGameState(resp.game);
-            if (resp.isNewRound != null && resp.isNewRound === true) {
-                this.resetForNewRound();          
-            }
+            if (resp.transition != null) {
+                if (resp.transition === "ROUND_START") {
+                    this.setState({ words: [], scoreboard: null, solution: null, gamePanelMode: "word-input" });         
+                }
+                else if (resp.transition === "ROUND_END") {
+                    this.setState({ gamePanelMode: "scoreboard" });
+                }
+            }   
+            
             if (resp.message != null) {
                 this.log("Server", resp.message);   
             }         

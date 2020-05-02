@@ -19,13 +19,13 @@ class Game:
 
     states = ['NEW_GAME', 'ROUND_IN_PROGRESS', 'GATHERING_LISTS', 'BETWEEN_ROUNDS']
 
-    def __init__(self, gid, properties, grid, analyzer, end_round_callback, list_request_callback, send_analysis_callback):
+    def __init__(self, gid, properties, grid, analyzer, send_update_callback, list_request_callback, send_analysis_callback):
         self.gid = gid
         self.properties = properties
         self.grid = grid
         self.analyzer = analyzer
         self.scheduler = BackgroundScheduler()
-        self.end_round_callback = end_round_callback
+        self.send_update_callback = send_update_callback
         self.list_request_callback = list_request_callback
         self.send_analysis_callback = send_analysis_callback
         self.player_lists = dict()
@@ -113,7 +113,7 @@ class Game:
             self.try_get_results()
 
     def schedule_force_analysis(self):
-        self.end_round_callback(self.gid)
+        self.send_update_callback(self.gid, "ROUND_END", "End of round!")
         # Wait 5 seconds, then run scheduled_force_analysis to stop waiting for those who have not yet sent lists.
         self.scheduler.add_job(self.scheduled_force_analysis, trigger = "date", next_run_time = datetime.now() + timedelta(0, 5))
 
