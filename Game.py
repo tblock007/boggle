@@ -67,7 +67,8 @@ class Game:
     def add_player_list(self, username, word_list):
         if self.state == 'GATHERING_LISTS':
             if username in self.player_scores.keys():
-                self.player_lists[username] = word_list
+                if username not in self.player_lists.keys():
+                    self.player_lists[username] = word_list
                 self.try_get_results()
                 return True
         return False
@@ -103,7 +104,10 @@ class Game:
             scored_list = sorted(scored)
             response.add_result(player, "scored", scored_list)
             response.add_result(player, "scores", [self.score(w) for w in scored_list])
+            round_score = sum(self.score(w) for w in scored_list)
+            self.player_scores[player] += round_score
         self.send_analysis_callback(self.gid, response.encode())
+        self.send_update_callback(self.gid, None, None)
 
     def scheduled_force_analysis(self):
         if self.state == 'GATHERING_LISTS':

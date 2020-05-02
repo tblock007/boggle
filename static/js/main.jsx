@@ -216,6 +216,7 @@ class App extends React.Component {
                     onRotateClicked = {() => this.rotateBoard()}
                     onFlipHorizontalClicked = {() => this.flipBoardHorizontal()}
                     onFlipVerticalClicked = {() => this.flipBoardVertical()}
+                    playerScores = {this.state.playerScores}
                 />
             </div>
         )

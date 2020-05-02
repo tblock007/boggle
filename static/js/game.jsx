@@ -80,7 +80,8 @@ class Scoreboard extends React.Component {
 
                     playerResults.push(
                         <div className="player-scoreboard" key={player}>
-                            [Score: {sum}] {player} -
+                            {player}<br />
+                            Score: {sum}
                             <ul>{playerlistScored.concat(playerlistStruck, playerlistInvalid)}</ul>
                         </div>
                     );

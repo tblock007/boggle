@@ -17,6 +17,14 @@ class ControlPanel extends React.Component {
         this.setState({ message: e.target.value });
     }
 
+    renderPlayerList() {
+        let player_list = [];
+        for (const [player, score] of Object.entries(this.props.playerScores)) {
+            player_list.push(<li key={player}>({score}) {player}</li>);
+        }
+        return (<ul>{player_list}</ul>);
+    }
+
     render() {
         const info = (<div className="status">
             <div><b>Currently connected to game: {this.props.gid}</b></div>
@@ -30,6 +38,8 @@ class ControlPanel extends React.Component {
                     );
         });
 
+        const player_list = this.renderPlayerList();
+
         return (
             <div className="control">
                 <div className="panel">
@@ -39,6 +49,9 @@ class ControlPanel extends React.Component {
                     <button className="other-button" onClick={() => this.props.onFlipHorizontalClicked()}>FLIP HORIZONTAL</button>
                     <button className="other-button" onClick={() => this.props.onFlipVerticalClicked()}>FLIP VERTICAL</button>
                     <div className="timer">{this.props.roundTimeRemaining}</div>                                     
+                </div>
+                <div className="player-list">
+                    {player_list}
                 </div>
                 <div className="chat">
                     <input type="text" value={this.state.message} onKeyDown={(e) => this.handleKeyDownMessage(e)} onChange={(e) => this.updateMessage(e)} placeholder="Enter chat message here" style={{ width: "99.5%" }} />
