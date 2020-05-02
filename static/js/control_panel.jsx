@@ -48,6 +48,7 @@ class ControlPanel extends React.Component {
                     <button className="other-button" onClick={() => this.props.onRotateClicked()}>ROTATE</button>
                     <button className="other-button" onClick={() => this.props.onFlipHorizontalClicked()}>FLIP HORIZONTAL</button>
                     <button className="other-button" onClick={() => this.props.onFlipVerticalClicked()}>FLIP VERTICAL</button>
+                    <button className="other-button" onClick={() => this.props.onLeaveGameClicked()}>LEAVE GAME</button>
                     <div className="timer">{this.props.roundTimeRemaining}</div>                                     
                 </div>
                 <div className="player-list">

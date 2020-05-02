@@ -84,6 +84,9 @@ class App extends React.Component {
         });        
         
         setInterval(() => {this.forceUpdate()}, 1000);
+        window.addEventListener("beforeunload", (event) => {
+            this.leaveGame(false);
+        });
     }
 
     padzero(n) {
@@ -170,6 +173,17 @@ class App extends React.Component {
         this.setState({ letters: newLetters });
     }
 
+    leaveGame(redirect) {
+        this.state.socket.emit("game_leave", {
+            username: this.state.username,
+            gid: this.state.gid,
+        });
+        if (redirect) {
+            // Redirect back to lobby after 0.5s timeout.
+            setTimeout(() => { window.location = "/lobby"; }, 500);
+        }
+    }
+
     timeRemaining() {
         if (this.state.roundEndTime === null) {
             return null;
@@ -177,7 +191,7 @@ class App extends React.Component {
         const now = new Date().getTime();
         const distance = this.state.roundEndTime - now;
         if (distance < 0) {
-            this.setState({ roundEndTime: null });
+            return null;
         }
         const minutes = Math.floor(distance / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
@@ -228,6 +242,7 @@ class App extends React.Component {
                     onRotateClicked = {() => this.rotateBoard()}
                     onFlipHorizontalClicked = {() => this.flipBoardHorizontal()}
                     onFlipVerticalClicked = {() => this.flipBoardVertical()}
+                    onLeaveGameClicked = {() => this.leaveGame(true)}
                     playerScores = {this.state.playerScores}
                 />
             </div>
