@@ -32,7 +32,7 @@ class Game:
 
         self.machine = Machine(model = self, states = Game.states, initial = 'NEW_GAME')
         self.machine.add_transition('start_round', ['NEW_GAME', 'BETWEEN_ROUNDS'], 'ROUND_IN_PROGRESS')
-        self.machine.add_transition('end_round', 'ROUND_IN_PROGRESS', 'GATHERING_LISTS')
+        self.machine.add_transition('end_round', 'ROUND_IN_PROGRESS', 'GATHERING_LISTS', after = ['schedule_force_analysis'])
         self.machine.add_transition('try_get_results', 'GATHERING_LISTS', 'BETWEEN_ROUNDS', conditions = ['all_lists_received'])
         self.machine.on_enter_ROUND_IN_PROGRESS('reset_board')
         self.machine.on_enter_BETWEEN_ROUNDS('analyze_endgame')
@@ -103,6 +103,17 @@ class Game:
             response.add_result(player, "scored", scored_list)
             response.add_result(player, "scores", [self.score(w) for w in scored_list])
         self.send_analysis_callback(self.gid, response.encode())
+
+    def scheduled_force_analysis(self):
+        if self.state == 'GATHERING_LISTS':
+            for username in self.player_scores.keys():
+                if username not in self.player_lists:
+                    self.player_lists[username] = []
+            self.try_get_results()
+
+    def schedule_force_analysis(self):
+        # Wait 5 seconds, then run scheduled_force_analysis to stop waiting for those who have not yet sent lists.
+        self.scheduler.add_job(self.scheduled_force_analysis, trigger = "date", next_run_time = datetime.now() + timedelta(0, 5))
 
     def all_lists_received(self):
         return all((p in self.player_lists.keys()) for p in self.player_scores.keys())
