@@ -44,6 +44,7 @@ class App extends React.Component {
             if (resp.transition != null) {
                 if (resp.transition === "ROUND_START") {
                     this.setState({ words: [], scoreboard: null, solution: null, gamePanelMode: "word-input" });         
+                    this.setState({ roundEndTime: new Date((new Date().getTime()) + this.state.minutes * 60 * 1000) });
                 }
                 else if (resp.transition === "ROUND_END") {
                     this.setState({ gamePanelMode: "scoreboard" });
@@ -51,7 +52,8 @@ class App extends React.Component {
             }   
             
             if (resp.message != null) {
-                this.log("Server", resp.message);   
+                this.log("Server", resp.message);  
+                $('.messages').scrollTop($('.messages')[0].scrollHeight + 300); 
             }         
         });
         this.state.socket.on("list_request", () => {
@@ -169,7 +171,17 @@ class App extends React.Component {
     }
 
     timeRemaining() {
-        return "0:00"
+        if (this.state.roundEndTime === null) {
+            return null;
+        }
+        const now = new Date().getTime();
+        const distance = this.state.roundEndTime - now;
+        if (distance < 0) {
+            this.setState({ roundEndTime: null });
+        }
+        const minutes = Math.floor(distance / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        return minutes.toString() + ":" + ((seconds <= 9) ? "0" : "") + seconds.toString();
     }
 
     render() {
