@@ -52,7 +52,7 @@ def handle_game_start_event(json, methods = ["GET", "POST"]):
     if not games[json["gid"]].has_player(json["username"]):
         emit("wrong_game_error")
     games[json["gid"]].start_round()
-    emit("game_state_update", {"message": "Game has begun!", "game": games[json["gid"]].encode()}, room = str(json["gid"]))
+    emit("game_state_update", {"isNewRound": True, "message": "Game has begun!", "game": games[json["gid"]].encode()}, room = str(json["gid"]))
 
 @socketio.on("list_submit")
 def handle_list_submit(json, methods = ["GET", "POST"]):

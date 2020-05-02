@@ -36,11 +36,24 @@ class App extends React.Component {
         }
     }
 
+    resetForNewRound() {
+        this.setState({
+            words: [],
+            scoreboard: null,
+            solution: null,
+        });
+    }
+
     componentDidMount() {
         this.state.socket = io.connect("http://" + document.domain + ":" + location.port);
         this.state.socket.on("game_state_update", (resp) => {
             this.updateGameState(resp.game);
-            this.log("Server", resp.message);
+            if (resp.isNewRound != null && resp.isNewRound === true) {
+                this.resetForNewRound();          
+            }
+            if (resp.message != null) {
+                this.log("Server", resp.message);   
+            }         
         });
         this.state.socket.on("list_request", () => {
             this.state.socket.emit("list_submit", {
@@ -104,14 +117,6 @@ class App extends React.Component {
 
     startRound() {
         this.state.socket.emit("game_start", {
-            username: this.state.username,
-            gid: this.state.gid,
-        });
-    }
-
-    // TODO: Eliminate this call in favor of server-side scheduling
-    endRound() {
-        this.state.socket.emit("game_end", {
             username: this.state.username,
             gid: this.state.gid,
         });
@@ -203,7 +208,6 @@ class App extends React.Component {
                     roundTimeRemaining={this.timeRemaining()}                   
                     onEnterMessage={(msg) => this.sendMessage(msg)}
                     onStartClicked = {() => this.startRound()}
-                    onEndClicked = {() => this.endRound()}
                     onRotateClicked = {() => this.rotateBoard()}
                     onFlipHorizontalClicked = {() => this.flipBoardHorizontal()}
                     onFlipVerticalClicked = {() => this.flipBoardVertical()}

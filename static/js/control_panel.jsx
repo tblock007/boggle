@@ -35,7 +35,6 @@ class ControlPanel extends React.Component {
                 <div className="panel">
                     {info}
                     <button className="other-button" onClick={() => this.props.onStartClicked()}>START ROUND</button>
-                    <button className="other-button" onClick={() => this.props.onEndClicked()}>END ROUND</button>
                     <button className="other-button" onClick={() => this.props.onRotateClicked()}>ROTATE</button>
                     <button className="other-button" onClick={() => this.props.onFlipHorizontalClicked()}>FLIP HORIZONTAL</button>
                     <button className="other-button" onClick={() => this.props.onFlipVerticalClicked()}>FLIP VERTICAL</button>
