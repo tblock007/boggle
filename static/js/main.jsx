@@ -18,6 +18,7 @@ class App extends React.Component {
             roundEndTime: null,
             scoreboard: null,
             solution: null,
+            gamePanelMode: "word-input",
         };
     }
 
@@ -33,6 +34,10 @@ class App extends React.Component {
 
         if (game.grid !== null) {
             this.setState({ letters: game.grid });
+        }
+
+        if (game.state == "GATHERING_LISTS") {
+            this.setState({ gamePanelMode: "scoreboard" });
         }
     }
 
@@ -122,6 +127,10 @@ class App extends React.Component {
         });
     }
 
+    setGamePanelMode(mode) {
+        this.setState({ gamePanelMode: mode });
+    }
+
     rotateBoard() {
         const height = this.state.letters.length;
         const width = this.state.letters[0].length;
@@ -199,6 +208,8 @@ class App extends React.Component {
                     flipV={() => this.flipBoardVertical()} 
                     scoreboard={this.state.scoreboard}
                     solution={this.state.solution}
+                    gamePanelMode={this.state.gamePanelMode}
+                    setGamePanelMode={(mode) => this.setGamePanelMode(mode)}
                 />
                 <ControlPanel 
                     gid={this.state.gid}

@@ -128,14 +128,13 @@ class Solution extends React.Component {
 class GamePanel extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {mode: "word-input" };
     }
 
     render() {
-        let wordInputTab = (<button className="selectable-header" onClick={() => { this.setState({ mode: "word-input" });}}>Word Input</button>);
-        let scoreboardTab = (<button className="selectable-header" onClick={() => { this.setState({ mode: "scoreboard" });}}>Scoreboard</button>);
-        let solutionTab = (<button className="selectable-header" onClick={() => { this.setState({ mode: "solution" });}}>Solution</button>);
-        if (this.state.mode === "word-input") {
+        let wordInputTab = (<button className="selectable-header" onClick={() => { this.props.setGamePanelMode("word-input"); }}>Word Input</button>);
+        let scoreboardTab = (<button className="selectable-header" onClick={() => {this.props.setGamePanelMode("scoreboard"); }}>Scoreboard</button>);
+        let solutionTab = (<button className="selectable-header" onClick={() => { this.props.setGamePanelMode("solution");  }}>Solution</button>);
+        if (this.props.gamePanelMode === "word-input") {
             var content = (<WordInput 
                             words = {this.props.words} 
                             onEnter = {this.props.onEnter} 
@@ -146,11 +145,11 @@ class GamePanel extends React.Component {
                         />);
             wordInputTab = (<button className="selected-header">Word Input</button>);
         }
-        else if (this.state.mode === "scoreboard") {
+        else if (this.props.gamePanelMode === "scoreboard") {
             var content = (<Scoreboard scoreboard = {this.props.scoreboard} />);
             scoreboardTab = (<button className="selected-header">Scoreboard</button>);
         }
-        else if (this.state.mode === "solution") {
+        else if (this.props.gamePanelMode === "solution") {
             var content = (<Solution solution = {this.props.solution} />);
             solutionTab = (<button className="selected-header">Solution</button>);
         }
@@ -214,7 +213,9 @@ class Game extends React.Component {
                     onH = {this.props.flipH}
                     onV = {this.props.flipV} 
                     scoreboard = {this.props.scoreboard}
-                    solution = {this.props.solution}                    
+                    solution = {this.props.solution}
+                    gamePanelMode = {this.props.gamePanelMode}
+                    setGamePanelMode = {this.props.setGamePanelMode}                   
                 />
             </div>
         );
