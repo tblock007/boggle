@@ -4,6 +4,10 @@ class LoginDialog extends React.Component {
         this.state = { username: "" };
     }
 
+    backToLobby() {
+        window.location = "/lobby";
+    }
+
     render() {        
         return (
             <div className="login-dialog">
@@ -13,6 +17,7 @@ class LoginDialog extends React.Component {
                     placeholder="Enter username" 
                 />
                 <button className="other-button" onClick={() => this.props.setUsername(this.state.username)}>JOIN!</button>
+                <button className="other-button" onClick={this.backToLobby}>Back to Lobby</button>
             </div>
         );
     }

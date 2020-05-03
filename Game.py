@@ -138,6 +138,8 @@ class Game:
         encoded = dict()
         encoded["gid"] = self.gid
         encoded["state"] = self.state
+        encoded["height"] = self.grid.height
+        encoded["width"] = self.grid.width
         encoded["grid"] = self.grid.letters
         encoded["min_letters"] = self.properties.min_letters
         encoded["minutes"] = self.properties.minutes

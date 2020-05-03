@@ -179,8 +179,8 @@ class App extends React.Component {
             gid: this.state.gid,
         });
         if (redirect) {
-            // Redirect back to lobby after 0.5s timeout.
-            setTimeout(() => { window.location = "/lobby"; }, 500);
+            // Redirect back to lobby after 0.2s to allow game_leave to send.
+            setTimeout(() => { window.location = "/lobby"; }, 200);
         }
     }
 

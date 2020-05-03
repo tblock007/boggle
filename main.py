@@ -21,17 +21,22 @@ def list_request_callback(gid):
 def send_analysis_callback(gid, analysis):
     if gid in games.keys():
         socketio.emit("game_analysis", analysis, room = str(gid))
+        socketio.emit("game_list_update", { gid:(g.encode()) for gid,g in games.items() }, room = "lobby")
+        
 
 @app.route("/lobby")
 def temporary_redirect():
-    return "Please go to /join/GAME to join a game."
+    return render_template("lobby.html")
 
 @app.route("/create/<gid>/<int:height>/<int:width>/<int:min_letters>/<int:minutes>/<language>")
 def create_game(gid, height, width, min_letters, minutes, language):
+    if gid == "lobby":
+        return "lobby is a reserved game name. Please choose a different name."
     if gid not in games.keys():
         grid = Grid(width, height, True)
         analyzer = Analyzer(lexicons.get(language.lower(), lexicons["english"]), language)
         games[gid] = Game(gid, GameProperties(min_letters = min_letters, minutes = minutes), grid, analyzer, send_game_update, list_request_callback, send_analysis_callback)
+        socketio.emit("game_list_update", { gid:(g.encode()) for gid,g in games.items() }, room = "lobby")
         return "Successfully created game {gid} with size {height}x{width}, letter minimum {min_letters}, time limit {minutes} minutes, and language {language}".format(gid = games[gid].gid, height = games[gid].grid.height, width = games[gid].grid.width, min_letters = games[gid].properties.min_letters, minutes = games[gid].properties.minutes, language = games[gid].analyzer.language)
     else:
         return "Game already exists!"
@@ -42,6 +47,11 @@ def join_game(gid):
         return "Game {0} not found!".format(gid)
     return render_template("game.html", gid = gid)
 
+@socketio.on("lobby_join")
+def handle_lobby_join(methods = ["GET", "POST"]):
+    join_room("lobby")
+    socketio.emit("game_list_update", { gid:(g.encode()) for gid,g in games.items() })
+
 @socketio.on("game_join")
 def handle_game_join_event(json, methods = ["GET", "POST"]):
     if json["gid"] not in games.keys():
@@ -51,6 +61,7 @@ def handle_game_join_event(json, methods = ["GET", "POST"]):
         player_map[request.sid] = (json["gid"], json["username"])      
         join_room(json["gid"])
         send_game_update(json["gid"], None, "{0} has joined the game!".format(json["username"]))
+        socketio.emit("game_list_update", { gid:(g.encode()) for gid,g in games.items() }, room = "lobby")
     else:
         emit("join_failed_error")
 
@@ -64,6 +75,7 @@ def handle_disconnect(methods = ["GET", "POST"]):
             del games[gid]
         else:
             send_game_update(gid, None, "{0} has left the game!".format(username))
+        socketio.emit("game_list_update", { gid:(g.encode()) for gid,g in games.items() }, room = "lobby")
         del player_map[request.sid]
 
 @socketio.on("game_leave")
@@ -74,8 +86,13 @@ def handle_game_leave_event(json, methods = ["GET", "POST"]):
             del games[json["gid"]]
         else:
             send_game_update(json["gid"], None, "{0} has left the game!".format(json["username"]))
+        socketio.emit("game_list_update", { gid:(g.encode()) for gid,g in games.items() }, room = "lobby")
         del player_map[request.sid]
         leave_room(json["gid"])
+
+@socketio.on("lobby_leave")
+def handle_lobby_leave_event(methods = ["GET", "POST"]):
+    leave_room("lobby")
 
 @socketio.on("game_start")
 def handle_game_start_event(json, methods = ["GET", "POST"]):
@@ -85,6 +102,7 @@ def handle_game_start_event(json, methods = ["GET", "POST"]):
     if not games[json["gid"]].has_player(json["username"]):
         emit("wrong_game_error")
     games[json["gid"]].start_round()
+    socketio.emit("game_list_update", { gid:(g.encode()) for gid,g in games.items() }, room = "lobby")
     send_game_update(json["gid"], "ROUND_START", "Round has begun!")
 
 @socketio.on("list_submit")
