@@ -20,14 +20,27 @@ class Lobby extends React.Component {
         setTimeout(() => { window.location = "/game/" + gameName; }, 200);
     }
 
+    create(gid, height, width, minLetters, minutes, language) {
+        this.state.socket.emit("game_create", {
+            gid: gid,
+            height: height,
+            width: width,
+            minLetters: minLetters,
+            minutes: minutes,
+            language: language,
+        });
+    }
+
     render() {        
         return (
             <div className="lobby">
                 <GameList 
                     games = {this.state.games}
-                    onGameClicked = {(gameName) => this.leaveLobby(gameName)}    
+                    onGameClicked = {(gameName) => this.leaveLobby(gameName)} 
                 />
-                <CreateGameDialog />
+                <CreateGameDialog 
+                    onCreateClicked = {(gid, height, width, minLetters, minutes, language) => this.create(gid, height, width, minLetters, minutes, language)}
+                />
             </div>
         );
     }

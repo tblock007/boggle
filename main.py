@@ -28,19 +28,6 @@ def send_analysis_callback(gid, analysis):
 def temporary_redirect():
     return render_template("lobby.html")
 
-@app.route("/create/<gid>/<int:height>/<int:width>/<int:min_letters>/<int:minutes>/<language>")
-def create_game(gid, height, width, min_letters, minutes, language):
-    if gid == "lobby":
-        return "lobby is a reserved game name. Please choose a different name."
-    if gid not in games.keys():
-        grid = Grid(width, height, True)
-        analyzer = Analyzer(lexicons.get(language.lower(), lexicons["english"]), language)
-        games[gid] = Game(gid, GameProperties(min_letters = min_letters, minutes = minutes), grid, analyzer, send_game_update, list_request_callback, send_analysis_callback)
-        socketio.emit("game_list_update", { gid:(g.encode()) for gid,g in games.items() }, room = "lobby")
-        return "Successfully created game {gid} with size {height}x{width}, letter minimum {min_letters}, time limit {minutes} minutes, and language {language}".format(gid = games[gid].gid, height = games[gid].grid.height, width = games[gid].grid.width, min_letters = games[gid].properties.min_letters, minutes = games[gid].properties.minutes, language = games[gid].analyzer.language)
-    else:
-        return "Game already exists!"
-
 @app.route("/game/<gid>")
 def join_game(gid):
     if gid not in games.keys():
@@ -51,6 +38,15 @@ def join_game(gid):
 def handle_lobby_join(methods = ["GET", "POST"]):
     join_room("lobby")
     socketio.emit("game_list_update", { gid:(g.encode()) for gid,g in games.items() })
+
+@socketio.on("game_create")
+def handle_game_create(json, methods = ["GET", "POST"]):
+    if json["gid"] == "lobby" or json["gid"] in games.keys():
+        return
+    grid = Grid(json["width"], json["height"], True)
+    analyzer = Analyzer(lexicons.get(json["language"].lower(), lexicons["english"]), json["language"])
+    games[json["gid"]] = Game(json["gid"], GameProperties(min_letters = json["minLetters"], minutes = json["minutes"]), grid, analyzer, send_game_update, list_request_callback, send_analysis_callback)
+    socketio.emit("game_list_update", { gid:(g.encode()) for gid,g in games.items() }, room = "lobby")
 
 @socketio.on("game_join")
 def handle_game_join_event(json, methods = ["GET", "POST"]):

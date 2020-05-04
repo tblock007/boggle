@@ -48,6 +48,7 @@ class GameList extends React.Component {
 
         return (
             <div className="game-list">
+                <div className="lobby-title">Game List</div>
                 {game_list}
             </div>
         );
