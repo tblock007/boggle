@@ -233,6 +233,7 @@ class App extends React.Component {
                 />
                 <ControlPanel 
                     gid={this.state.gid}
+                    gameState={this.state.gameState}
                     minLetters={this.state.minimumLetters}
                     language={this.state.language}
                     messages={this.state.messages}
