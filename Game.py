@@ -28,6 +28,7 @@ class Game:
         self.send_update_callback = send_update_callback
         self.list_request_callback = list_request_callback
         self.send_analysis_callback = send_analysis_callback
+        self.players = set()
         self.player_lists = dict()
         self.player_scores = dict()
 
@@ -40,33 +41,33 @@ class Game:
 
         self.scheduler.start()
 
-    # TODO: Make all of the methods that could be called by server return a response to be sent to all players in the room
-    # Add players and such would just be a response that adds SERVER message: x has joined the room! etc.
     def add_player(self, username):
         if self.state == 'ROUND_IN_PROGRESS':
             return False
-        if username in self.player_scores.keys():
+        if username in self.players:
             return False
-        self.player_scores[username] = 0
+        self.players.add(username)
         self.player_lists[username] = []
+        if username not in self.player_scores.keys():
+            self.player_scores[username] = 0
         return True
 
     def remove_player(self, username):
-        if username in self.player_scores.keys():
+        if username in self.players:
+            self.players.remove(username)
             self.player_lists.pop(username, None)
-            self.player_scores.pop(username, None)
             return True
         return False
 
     def has_player(self, username):
-        return username in self.player_scores.keys()
+        return username in self.players
 
     def num_players(self):
-        return len(self.player_scores)
+        return len(self.players)
 
     def add_player_list(self, username, word_list):
         if self.state == 'GATHERING_LISTS':
-            if username in self.player_scores.keys():
+            if username in self.players:
                 if username not in self.player_lists.keys():
                     self.player_lists[username] = word_list
                 self.try_get_results()
@@ -111,7 +112,7 @@ class Game:
 
     def scheduled_force_analysis(self):
         if self.state == 'GATHERING_LISTS':
-            for username in self.player_scores.keys():
+            for username in self.players:
                 if username not in self.player_lists:
                     self.player_lists[username] = []
             self.try_get_results()
@@ -122,7 +123,7 @@ class Game:
         self.scheduler.add_job(self.scheduled_force_analysis, trigger = "date", next_run_time = datetime.now() + timedelta(0, 5))
 
     def all_lists_received(self):
-        return all((p in self.player_lists.keys()) for p in self.player_scores.keys())
+        return all((p in self.player_lists.keys()) for p in self.players)
   
     def get_common_words(self):
         # Get counts for each player, and then sum them to obtain counts for all words found.
@@ -144,7 +145,7 @@ class Game:
         encoded["min_letters"] = self.properties.min_letters
         encoded["minutes"] = self.properties.minutes
         encoded["language"] = self.analyzer.language
-        encoded["player_scores"] = self.player_scores
+        encoded["player_scores"] = { p:s for p,s in self.player_scores.items() if p in self.players }
         return encoded
 
 class GameEncoder(json.JSONEncoder):
