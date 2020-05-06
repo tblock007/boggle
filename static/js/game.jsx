@@ -17,10 +17,12 @@ class WordInput extends React.Component {
             else if (this.state.word === "V" || this.state.word === "v") {
                 this.setState({ word: "" });
                 this.props.onV();
-            }  
-            else if (this.state.word !== "") {
+            }
+            else {
+                if (this.state.word.length >= this.props.minLetters) {
+                    this.props.onEnter(this.state.word);
+                }
                 this.setState({ word: "" });
-                this.props.onEnter(this.state.word);
             }
         }
         else if (e.keyCode == 46) { // the delete key code
@@ -137,6 +139,7 @@ class GamePanel extends React.Component {
         let solutionTab = (<button className="selectable-header" onClick={() => { this.props.setGamePanelMode("solution");  }}>Solution</button>);
         if (this.props.gamePanelMode === "word-input") {
             var content = (<WordInput 
+                            minLetters = {this.props.minLetters}
                             words = {this.props.words} 
                             onEnter = {this.props.onEnter} 
                             onDel = {this.props.onDel}
@@ -200,14 +203,12 @@ function Board(props) {
 
 class Game extends React.Component {    
     render() {
-        const letters = this.props.letters;
-        const words = this.props.words;
-
         return (
             <div className="game">
-                <Board className="board" letters={letters} />
+                <Board className="board" letters={this.props.letters} />
                 <GamePanel 
-                    words = {words} 
+                    minLetters = {this.props.minLetters}
+                    words = {this.props.words} 
                     onEnter = {this.props.addWord} 
                     onDel = {this.props.removeWord}
                     onR = {this.props.rotate}

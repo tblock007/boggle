@@ -6,7 +6,7 @@ class App extends React.Component {
             gid: props.gid,
             gameState: null,
             letters: [[' ', ' ', ' ', ' ', ' '], [' ', ' ', ' ', ' ', ' '], [' ', ' ', ' ', ' ', ' '], [' ', ' ', ' ', ' ', ' '], [' ', ' ', ' ', ' ', ' ']],
-            minimumLetters: null,
+            minLetters: null,
             minutes: null,
             language: null,
             playerScores: null,
@@ -26,7 +26,7 @@ class App extends React.Component {
         this.setState({
             gid: game.gid,
             gameState: game.state,
-            minimumLetters: game.min_letters,
+            minLetters: game.min_letters,
             minutes: game.minutes,
             language: game.language,
             playerScores: game.player_scores,
@@ -220,6 +220,7 @@ class App extends React.Component {
             <div>
                 <Game 
                     letters={this.state.letters}
+                    minLetters={this.state.minLetters}
                     words={this.state.words}
                     addWord={(w) => this.addWord(w)} 
                     removeWord={() => this.removeWord()}
@@ -234,7 +235,7 @@ class App extends React.Component {
                 <ControlPanel 
                     gid={this.state.gid}
                     gameState={this.state.gameState}
-                    minLetters={this.state.minimumLetters}
+                    minLetters={this.state.minLetters}
                     language={this.state.language}
                     messages={this.state.messages}
                     roundTimeRemaining={this.timeRemaining()}                   
