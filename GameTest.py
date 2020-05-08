@@ -5,6 +5,13 @@ from Game import Game, GameEncoder, GameProperties
 from Grid import Grid
 from PrefixTrie import PrefixTrie
 
+def game_update_callback(g, t, m):
+    pass
+def list_request_callback(g):
+    pass
+def send_analysis_callback(g, a):
+    pass
+
 class GameTest(unittest.TestCase):
 
     def setUp(self):
@@ -12,7 +19,7 @@ class GameTest(unittest.TestCase):
         valid_words = PrefixTrie("lexicons/prefix_trie_test.txt")
         analyzer = Analyzer(valid_words, "English")
         
-        self.game = Game('test', GameProperties(min_letters = 4, minutes = 4), grid, analyzer)
+        self.game = Game('test', GameProperties(min_letters = 4, minutes = 4), grid, analyzer, game_update_callback, list_request_callback, send_analysis_callback)
         self.game.add_player("T-block")
         self.game.add_player("O-block")
         self.game.add_player("I-block")
