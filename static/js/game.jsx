@@ -65,24 +65,31 @@ class Scoreboard extends React.Component {
             let playerResults = [];
             for (let player in results) {
                 if (results.hasOwnProperty(player)) {
-
                     let playerlistInvalid = results[player].invalid.map((word, index) => {
                         return (<li key={"in" + index.toString()}><s>{word} ?</s></li>);
                     });
-
                     let playerlistStruck = results[player].struck.map((word, index) => {
                         return (<li key={"st" + index.toString()}><s>{word}</s></li>);
                     });
-
                     let playerlistScored = results[player].scored.map((word, index) => {
                         return (<li key={"sc" + index.toString()}><div className="wordscore">{results[player].scores[index]}</div> {word}</li>);
                     });
-
                     let sum = results[player].scores.reduce((a, b) => a + b, 0)
+
+                    let title = "";
+                    if (player === this.props.longestWord) {
+                        title = title + " Phenomenal";
+                    }
+                    if (player === this.props.mostInvalid) {
+                        title = title + " Goober";
+                    }
+                    if (title !== "") {
+                        title = " the" + title;
+                    }
 
                     playerResults.push(
                         <div className="player-scoreboard" key={player}>
-                            {player}<br />
+                            {player + title}<br />
                             Score: {sum}
                             <ul>{playerlistScored.concat(playerlistStruck, playerlistInvalid)}</ul>
                         </div>
@@ -150,7 +157,7 @@ class GamePanel extends React.Component {
             wordInputTab = (<button className="selected-header">Word Input</button>);
         }
         else if (this.props.gamePanelMode === "scoreboard") {
-            var content = (<Scoreboard scoreboard = {this.props.scoreboard} />);
+            var content = (<Scoreboard scoreboard = {this.props.scoreboard} mostInvalid = {this.props.mostInvalid} mostStruck = {this.props.mostStruck} longestWord = {this.props.longestWord} />);
             scoreboardTab = (<button className="selected-header">Scoreboard</button>);
         }
         else if (this.props.gamePanelMode === "solution") {
@@ -216,6 +223,9 @@ class Game extends React.Component {
                     onV = {this.props.flipV} 
                     scoreboard = {this.props.scoreboard}
                     solution = {this.props.solution}
+                    mostInvalid = {this.props.mostInvalid}
+                    mostStruck = {this.props.mostStruck}
+                    longestWord = {this.props.longestWord}
                     gamePanelMode = {this.props.gamePanelMode}
                     setGamePanelMode = {this.props.setGamePanelMode}                   
                 />

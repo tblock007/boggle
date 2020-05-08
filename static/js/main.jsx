@@ -18,6 +18,9 @@ class App extends React.Component {
             roundEndTime: null,
             scoreboard: null,
             solution: null,
+            mostInvalid: null,
+            mostStruck: null,
+            longestWord: null,
             gamePanelMode: "word-input",
         };
     }
@@ -64,7 +67,8 @@ class App extends React.Component {
             });
         });
         this.state.socket.on("game_analysis", resp => {
-            this.setState({ scoreboard: resp.scoreboard, solution: resp.solution });
+            console.log(resp);
+            this.setState({ scoreboard: resp.scoreboard, solution: resp.solution, mostInvalid: resp.most_invalid, mostStruck: resp.most_struck, longestWord: resp.longest_word });
         });
         this.state.socket.on("chat_message", resp => { 
             this.log(resp.username, resp.message); 
@@ -229,6 +233,9 @@ class App extends React.Component {
                     flipV={() => this.flipBoardVertical()} 
                     scoreboard={this.state.scoreboard}
                     solution={this.state.solution}
+                    mostInvalid = {this.state.mostInvalid}
+                    mostStruck = {this.state.mostStruck}
+                    longestWord = {this.state.longestWord}
                     gamePanelMode={this.state.gamePanelMode}
                     setGamePanelMode={(mode) => this.setGamePanelMode(mode)}
                 />

@@ -95,7 +95,7 @@ class Game:
         response = GameResults()
         self.analyzer.set_grid(self.grid.letters)
         response.set_solution(self.get_all_words())
-        struck = self.get_common_words()
+        struck = self.get_common_words()   
         for player, word_list in self.player_lists.items():
             invalid = set(w for w in word_list if (len(w) < self.properties.min_letters or not self.analyzer.check(w)))
             remaining = set(word_list) - invalid
@@ -107,6 +107,9 @@ class Game:
             response.add_result(player, "scores", [self.score(w) for w in scored_list])
             round_score = sum(self.score(w) for w in scored_list)
             self.player_scores[player] += round_score
+        response.compute_most_invalid()
+        response.compute_most_struck()
+        response.compute_longest_word_found()
         self.send_analysis_callback(self.gid, response.encode())
         self.send_update_callback(self.gid, None, None)
 
@@ -134,7 +137,7 @@ class Game:
         all_words = [w for w in self.analyzer.find_all_words() if len(w) >= self.properties.min_letters]
         all_words.sort(key = (lambda x: (-1 * len(x), x)))
         return all_words
-
+    
     def encode(self):
         encoded = dict()
         encoded["gid"] = self.gid
