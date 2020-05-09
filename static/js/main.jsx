@@ -67,7 +67,6 @@ class App extends React.Component {
             });
         });
         this.state.socket.on("game_analysis", resp => {
-            console.log(resp);
             this.setState({ scoreboard: resp.scoreboard, solution: resp.solution, mostInvalid: resp.most_invalid, mostStruck: resp.most_struck, longestWord: resp.longest_word });
         });
         this.state.socket.on("chat_message", resp => { 
@@ -120,6 +119,15 @@ class App extends React.Component {
             gid: this.state.gid, 
             username: this.state.username, 
             message: msg
+        });
+    }
+
+    requestDefinition(word) {
+        this.state.socket.emit('definition_request', {
+            gid: this.state.gid,
+            username: this.state.username,
+            language: this.state.language,
+            word: word
         });
     }
 
@@ -238,6 +246,7 @@ class App extends React.Component {
                     longestWord = {this.state.longestWord}
                     gamePanelMode={this.state.gamePanelMode}
                     setGamePanelMode={(mode) => this.setGamePanelMode(mode)}
+                    requestDefinition = {(word) => this.requestDefinition(word)}
                 />
                 <ControlPanel 
                     gid={this.state.gid}

@@ -173,6 +173,10 @@ body {
   color: red;
 }
 
+.definable {
+  cursor: pointer;
+}
+
 /*************************/
 /* CPANEL ELEMENTS       */
 /*************************/

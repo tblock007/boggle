@@ -43,7 +43,7 @@ class PrefixTrie:
             for w in words:
                 self.root.insert(w.strip()[::-1]) 
 
-    # Returns True iff 
+    # Returns True iff the word is in the PrefixTrie.
     def check(self, word):
         # Note that we need to check the reverse of the word since 
         # they are stored backwards in the PrefixTrie.

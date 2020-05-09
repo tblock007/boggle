@@ -1,4 +1,5 @@
 from Analyzer import Analyzer
+from Definer import Definer
 from Game import Game, GameProperties
 from Grid import Grid
 from PrefixTrie import PrefixTrie
@@ -23,7 +24,6 @@ def send_analysis_callback(gid, analysis):
         socketio.emit("game_analysis", analysis, room = str(gid))
         socketio.emit("game_list_update", { gid:(g.encode()) for gid,g in games.items() }, room = "lobby")
         
-
 @app.route("/lobby")
 def temporary_redirect():
     return render_template("lobby.html")
@@ -117,14 +117,32 @@ def handle_chat_message(json, methods = ["GET", "POST"]):
     if not games[json["gid"]].has_player(json["username"]):
         emit("wrong_game_error")
     emit("chat_message", json, room = str(json["gid"]))
+
+@socketio.on("definition_request")
+def handle_definition_request(json, methods = ["GET", "POST"]):
+    if json["gid"] not in games.keys():
+        emit("game_dne_error")
+        return
+    if not games[json["gid"]].has_player(json["username"]):
+        emit("wrong_game_error")
+    definition = definers[json["language"].lower()].define(json["word"]) if json["language"] in definers.keys() else None
+    if definition == None:
+        definition = "Could not find definition for {0}".format(json["word"].upper())
+    definition_message = { "username": "Definition", "message": definition }
+    emit("chat_message", definition_message, room = str(json["gid"]))
     
 if __name__ == "__main__":    
     print('Starting Boggle server!')
-    print('Loading dictionaries...')
+    print('Loading lexicons...')
     lexicons = dict()
     lexicons["english"] = PrefixTrie("lexicons/csw_en.txt")
     lexicons["french"] = PrefixTrie("lexicons/ods5_fr.txt")
+    print('Lexicons loaded!')
+    print('Loading dictionaries...')
+    definers = dict()
+    definers["english"] = Definer("lexicons/CSW19defs.txt")
     print('Dictionaries loaded!')
+
 
     # Maps GID to Game.
     games = dict()

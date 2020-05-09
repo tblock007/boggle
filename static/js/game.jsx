@@ -66,13 +66,13 @@ class Scoreboard extends React.Component {
             for (let player in results) {
                 if (results.hasOwnProperty(player)) {
                     let playerlistInvalid = results[player].invalid.map((word, index) => {
-                        return (<li key={"in" + index.toString()}><s>{word} ?</s></li>);
+                        return (<li key={"in" + index.toString()} className="definable" onClick={() => this.props.requestDefinition(word)}><s>{word} ?</s></li>);
                     });
                     let playerlistStruck = results[player].struck.map((word, index) => {
-                        return (<li key={"st" + index.toString()}><s>{word}</s></li>);
+                        return (<li key={"st" + index.toString()} className="definable" onClick={() => this.props.requestDefinition(word)}><s>{word}</s></li>);
                     });
                     let playerlistScored = results[player].scored.map((word, index) => {
-                        return (<li key={"sc" + index.toString()}><div className="wordscore">{results[player].scores[index]}</div> {word}</li>);
+                        return (<li key={"sc" + index.toString()} className="definable" onClick={() => this.props.requestDefinition(word)}><div className="wordscore">{results[player].scores[index]}</div> {word}</li>);
                     });
                     let sum = results[player].scores.reduce((a, b) => a + b, 0)
 
@@ -122,7 +122,7 @@ class Solution extends React.Component {
         }
         else {
             const list = this.props.solution.map((word, index) => {
-                return (<li key={index}>{word.toUpperCase()}</li>);
+                return (<li key={index} className="definable" onClick={() => this.props.requestDefinition(word)}>{word.toUpperCase()}</li>);
             });
             return (
                 <div className="solution">
@@ -157,11 +157,11 @@ class GamePanel extends React.Component {
             wordInputTab = (<button className="selected-header">Word Input</button>);
         }
         else if (this.props.gamePanelMode === "scoreboard") {
-            var content = (<Scoreboard scoreboard = {this.props.scoreboard} mostInvalid = {this.props.mostInvalid} mostStruck = {this.props.mostStruck} longestWord = {this.props.longestWord} />);
+            var content = (<Scoreboard scoreboard = {this.props.scoreboard} mostInvalid = {this.props.mostInvalid} mostStruck = {this.props.mostStruck} longestWord = {this.props.longestWord} requestDefinition = {this.props.requestDefinition} />);
             scoreboardTab = (<button className="selected-header">Scoreboard</button>);
         }
         else if (this.props.gamePanelMode === "solution") {
-            var content = (<Solution solution = {this.props.solution} />);
+            var content = (<Solution solution = {this.props.solution} requestDefinition = {this.props.requestDefinition} />);
             solutionTab = (<button className="selected-header">Solution</button>);
         }
         return (
@@ -227,7 +227,8 @@ class Game extends React.Component {
                     mostStruck = {this.props.mostStruck}
                     longestWord = {this.props.longestWord}
                     gamePanelMode = {this.props.gamePanelMode}
-                    setGamePanelMode = {this.props.setGamePanelMode}                   
+                    setGamePanelMode = {this.props.setGamePanelMode} 
+                    requestDefinition = {this.props.requestDefinition}                  
                 />
             </div>
         );
