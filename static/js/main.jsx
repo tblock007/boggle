@@ -216,7 +216,7 @@ class App extends React.Component {
                 <div>
                     <LoginDialog
                         setUsername={(name) => {
-                            if (name !== "") {
+                            if (name !== "" && name.toLowerCase() !== "server" && name.toLowerCase() !== "definition") {
                                 this.setState({ username: name });
                                 this.state.socket.emit("game_join", {
                                     username: name,
