@@ -261,6 +261,7 @@ class App extends React.Component {
                     onFlipHorizontalClicked = {() => this.flipBoardHorizontal()}
                     onFlipVerticalClicked = {() => this.flipBoardVertical()}
                     onLeaveGameClicked = {() => this.leaveGame(true)}
+                    requestDefinition = {(word) => this.requestDefinition(word)}
                     playerScores = {this.state.playerScores}
                 />
             </div>

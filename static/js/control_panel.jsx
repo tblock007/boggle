@@ -5,8 +5,12 @@ class ControlPanel extends React.Component {
     }
 
     handleKeyDownMessage(e) {
-        if (e.keyCode == 13) { // the enter key code   
-            if (this.state.message !== "") {
+        if (e.keyCode == 13) { // the enter key code
+            if (this.state.message.toLowerCase().startsWith("!define")) {
+                this.setState({ message: "" });
+                this.props.requestDefinition(this.state.message.split(" ")[1]);
+            }
+            else if (this.state.message !== "") {
                 this.setState({ message: "" });            
                 this.props.onEnterMessage(this.state.message);
             }
