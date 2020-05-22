@@ -220,3 +220,16 @@ body {
   margin-top: 10px;
   overflow-y: scroll;
 } 
+
+
+/*************************/
+/* LOGIN ELEMENTS         */
+/*************************/
+
+.login-dialog {
+  margin: auto;
+  display: block;
+  position: relative;
+  top: 200px;
+  width: 300px;
+}

@@ -224,6 +224,7 @@ class App extends React.Component {
                                 });
                             }
                         }}
+                        gid={this.state.gid}
                     />
                 </div>
             )
