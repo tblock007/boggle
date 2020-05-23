@@ -77,6 +77,9 @@ class Scoreboard extends React.Component {
                     let sum = results[player].scores.reduce((a, b) => a + b, 0)
 
                     let title = "";
+                    if (player === this.props.mostStruck) {
+                        title = title + " Bullied";
+                    }
                     if (player === this.props.longestWord) {
                         title = title + " Phenomenal";
                     }
